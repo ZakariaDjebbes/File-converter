@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B25C0800-0B0E-49A5-83D9-9ABD48309527}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>PDF_Generator</RootNamespace>
+    <RootNamespace>File_Converter</RootNamespace>
     <AssemblyName>File Converter</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -77,12 +77,6 @@
     <Reference Include="MaterialSkin, Version=2.1.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MaterialSkin.2.2.1.2\lib\net461\MaterialSkin.dll</HintPath>
     </Reference>
-    <Reference Include="PdfSharp, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\PDFsharp.1.50.5147\lib\net20\PdfSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="PdfSharp.Charting, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\PDFsharp.1.50.5147\lib\net20\PdfSharp.Charting.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -98,6 +92,7 @@
   <ItemGroup>
     <Compile Include="Control\PdfFileConverter.cs" />
     <Compile Include="Control\FileConverter.cs" />
+    <Compile Include="Control\TextFileConverter.cs" />
     <Compile Include="Model\FileType.cs" />
     <Compile Include="Model\TextFileType.cs" />
     <Compile Include="View\MainForm.cs">

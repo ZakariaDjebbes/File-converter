@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
-using FileConverter.Control;
-using FileConverter.Model;
+using File_Converter.Control;
+using File_Converter.Model;
 using MaterialSkin;
 using MaterialSkin.Controls;
 using PDF_Generator.Model;
 
-namespace FileConverter
+namespace File_Converter
 {
 	public partial class MainForm : MaterialForm
 	{
@@ -72,8 +72,12 @@ namespace FileConverter
 
 			if (TextFileType.Exists(convertToExtension) && TextFileType.Exists(currentFileExtension))
 			{
+				saveFileDialog.Filter = current_target.GetFilter();
+
 				if (!textFileConversionBackgroundWorker.IsBusy)
 				{
+					convertTextFileButton.Enabled = false;
+
 					if (current_target == null)
 					{
 						MessageBox.Show($"Target file type is empty, please try again.",
@@ -150,6 +154,7 @@ namespace FileConverter
 		private void TextFileConversionBackgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
 		{
 			Stream stream;
+			string path = (string)e.Argument;
 
 			if ((stream = textFileOpenDialog.OpenFile()) != null)
 			{
@@ -160,7 +165,7 @@ namespace FileConverter
 					pdfFileConverter.FileConverting += OnFileConverting;
 					pdfFileConverter.FileConverted += OnFileConverted;
 
-					pdfFileConverter.TextToPdf(stream, (string) e.Argument);
+					pdfFileConverter.TextToPdf(stream, path);
 				}
 				else if (current_target.Extension.Equals(TextFileType.Word.Extension))
 				{
@@ -168,7 +173,12 @@ namespace FileConverter
 				}
 				else if (current_target.Extension.Equals(TextFileType.Txt.Extension))
 				{
-					NotYetImplementedMessageBox();
+					TextFileConverter textFileConverter = new TextFileConverter();
+					textFileConverter.FileStartConverting += OnFileStartConverting;
+					textFileConverter.FileConverting += OnFileConverting;
+					textFileConverter.FileConverted += OnFileConverted;
+
+					textFileConverter.PdfToText(stream, path);
 				}
 			}
 			else
@@ -178,6 +188,11 @@ namespace FileConverter
 				MessageBoxButtons.OK,
 				MessageBoxIcon.Error);
 			}
+
+			convertTextFileButton.Invoke((Action)(() =>
+			{
+				convertTextFileButton.Enabled = true;
+			}));
 		}
 
 		private void NotYetImplementedMessageBox()

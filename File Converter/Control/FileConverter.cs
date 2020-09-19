@@ -1,15 +1,15 @@
 ﻿using System;
 using System.IO;
 
-namespace FileConverter.Control
+namespace File_Converter.Control
 {
-	internal class ConvertLogArgs : EventArgs
+	public class ConvertLogArgs : EventArgs
 	{
 		public int ConversionPercent { get; set; }
 		public int CurrentLine { get; set; }
 	}
 
-	internal abstract class FileConverter
+	public abstract class FileConverter
 	{
 		public EventHandler FileStartConverting;
 		public EventHandler<ConvertLogArgs> FileConverting;
@@ -25,7 +25,10 @@ namespace FileConverter.Control
 				CurrentLine = line
 			});
 
-		public int GetNumberOfLines(StreamReader streamReader, bool reset = true)
+		protected virtual void OnFileConverted() 
+			=> FileConverted?.Invoke(this, EventArgs.Empty);
+
+		protected static int GetNumberOfLines(StreamReader streamReader, bool reset = true)
 		{
 			int lineCount = 0;
 

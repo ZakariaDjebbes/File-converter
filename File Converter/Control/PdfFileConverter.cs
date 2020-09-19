@@ -1,17 +1,12 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
-using iText.Layout.Properties;
 
-namespace FileConverter.Control
+namespace File_Converter.Control
 {
-	internal class PdfFileConverter : FileConverter
+	public class PdfFileConverter : FileConverter
 	{
-		protected virtual void OnFileConverted(bool isSuccess) => FileConverted?.Invoke(
-			this, EventArgs.Empty);
-
 		public void TextToPdf(Stream stream, string path)
 		{
 			OnFileStartConverting();
@@ -19,8 +14,8 @@ namespace FileConverter.Control
 			using (StreamReader streamReader = new StreamReader(stream))
 			{
 				int lineCount = GetNumberOfLines(streamReader);
-				var pdf = new PdfDocument(new PdfWriter(path));
-				var document = new Document(pdf);
+				PdfDocument pdf = new PdfDocument(new PdfWriter(path));
+				Document document = new Document(pdf);
 
 				int lineNumber = 1;
 				int percent = 0;
@@ -35,8 +30,9 @@ namespace FileConverter.Control
 					lineNumber++;
 				}
 				document.Close();
-				OnFileConverted(true);
 			}
+
+			OnFileConverted();
 		}
 	}
 }

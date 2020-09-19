@@ -1,4 +1,4 @@
-﻿namespace FileConverter
+﻿namespace File_Converter
 {
 	partial class MainForm
 	{
@@ -365,8 +365,7 @@
 			// 
 			// textFileOpenDialog
 			// 
-			this.textFileOpenDialog.FileName = "openFileDialog1";
-			this.textFileOpenDialog.Filter = "\"Text file\"|*.txt";
+			this.textFileOpenDialog.Filter = "Text files|*.pdf;*.txt|Text file|*.txt|PDF file|*.pdf|All files|*.*";
 			this.textFileOpenDialog.Title = "Choose a file";
 			this.textFileOpenDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.TextFileOpenDialog_FileOk);
 			// 

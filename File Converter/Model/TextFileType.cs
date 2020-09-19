@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using PDF_Generator.Model;
 
-namespace FileConverter.Model
+namespace File_Converter.Model
 {
 	internal class TextFileType : FileType
 	{

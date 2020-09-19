@@ -4,5 +4,10 @@
 	{
 		public string Value { get; set; }
 		public string Extension { get; set; }
+
+		public string GetFilter()
+		{
+			return $"{Value}|*{Extension}";
+		}
 	}
 }
