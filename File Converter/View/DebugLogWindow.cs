@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using File_Converter.Debug;
 
@@ -73,6 +74,21 @@ namespace File_Converter.View
 		private void backgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
 		{
 			Logger.Instance.PrintToListView(logsListView);
+		}
+
+		private void saveButton_Click(object sender, EventArgs e)
+		{
+			string path = Path.Combine(Application.StartupPath, "logs.txt");
+			
+			using (var tw = new StreamWriter(path))
+			{
+				foreach (ListViewItem item in logsListView.Items)
+				{
+					tw.WriteLine(item.Text);
+				}
+			}
+
+			MessageBox.Show($"Logs saved to {path}", "Logs saved", MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 	}
 }
