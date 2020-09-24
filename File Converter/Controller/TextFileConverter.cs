@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
 
-namespace File_Converter.Control
+namespace File_Converter.Controller
 {
 	public class TextFileConverter : FileConverter
 	{
 		public void PdfToText(Stream stream, string path)
 		{
-			OnFileStartConverting();
+			OnFileStartConverting(path);
 			
 			List<string> pdfContent= new List<string>();
 
@@ -28,12 +27,12 @@ namespace File_Converter.Control
 				parser.ProcessPageContent(pdf.GetPage(i));
 				pdfContent.Add(extractionStrategy.GetResultantText());
 				int percent = i * 100 / numberOfPages;
-				OnFileConverting(percent, i);
+				OnFileConverting(path, percent, i);
 			}
 
 			pdf.Close();
 			File.WriteAllLines(path, pdfContent, Encoding.UTF8);
-			OnFileConverted();
+			OnFileConverted(path);
 		}
 	}
 }

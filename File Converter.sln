@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30330.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "File Converter", "PDF Generator\File Converter.csproj", "{B25C0800-0B0E-49A5-83D9-9ABD48309527}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "File Converter", "File Converter\File Converter.csproj", "{B25C0800-0B0E-49A5-83D9-9ABD48309527}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

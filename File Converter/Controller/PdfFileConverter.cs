@@ -3,18 +3,19 @@ using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
 
-namespace File_Converter.Control
+namespace File_Converter.Controller
 {
 	public class PdfFileConverter : FileConverter
 	{
-		public void TextToPdf(Stream stream, string path)
+		public MemoryStream TextToPdf(Stream stream, string path)
 		{
-			OnFileStartConverting();
+			OnFileStartConverting(path);
+			MemoryStream workStream = new MemoryStream();
 
 			using (StreamReader streamReader = new StreamReader(stream))
 			{
 				int lineCount = GetNumberOfLines(streamReader);
-				PdfDocument pdf = new PdfDocument(new PdfWriter(path));
+				PdfDocument pdf = new PdfDocument(new PdfWriter(workStream));
 				Document document = new Document(pdf);
 
 				int lineNumber = 1;
@@ -26,13 +27,15 @@ namespace File_Converter.Control
 					Paragraph paragraph = new Paragraph(line);
 					document.Add(paragraph);
 					percent = lineNumber * 100 / lineCount;
-					OnFileConverting(percent, lineNumber);
+					OnFileConverting(path, percent, lineNumber);
 					lineNumber++;
 				}
+
 				document.Close();
 			}
 
-			OnFileConverted();
+			OnFileConverted(path);
+			return workStream;
 		}
 	}
 }
