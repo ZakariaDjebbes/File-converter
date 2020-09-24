@@ -11,18 +11,16 @@ namespace File_Converter.Model
 		public static readonly ArchiveFileType Zip = new ArchiveFileType("Zip file (*.zip)", ".zip");
 		public static readonly ArchiveFileType Rar = new ArchiveFileType("Rar file (*.rar)", ".rar");
 
-
 		static ArchiveFileType()
 		{
 			valuePairs = new Dictionary<string, ArchiveFileType>
 			{
 				{ Zip.Extension, Zip},
 				{ Rar.Extension, Rar },
-		
 			};
 		}
 
-		private ArchiveFileType(string value, string extension) 
+		private ArchiveFileType(string value, string extension)
 		{
 			Value = value;
 			Extension = extension;

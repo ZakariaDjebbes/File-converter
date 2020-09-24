@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
@@ -18,7 +16,7 @@ namespace File_Converter.Controller
 
 			PdfDocument pdf = new PdfDocument(new PdfReader(stream));
 			FilteredEventListener listener = new FilteredEventListener();
-			LocationTextExtractionStrategy extractionStrategy = 
+			LocationTextExtractionStrategy extractionStrategy =
 				listener.AttachEventListener(new LocationTextExtractionStrategy());
 			PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
 			int numberOfPages = pdf.GetNumberOfPages();

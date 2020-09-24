@@ -23,8 +23,6 @@ namespace File_Converter.View
 				refreshBar.Value = 0;
 				refreshBar.Visible = true;
 			}));
-
-
 		}
 
 		private void OnLogging(object sender, LogArgs e)
@@ -33,8 +31,6 @@ namespace File_Converter.View
 			{
 				refreshBar.Value = e.percent;
 			}));
-
-
 		}
 
 		private void OnEndLogging(object sender, EventArgs e)
@@ -44,8 +40,6 @@ namespace File_Converter.View
 				refreshBar.Value = 0;
 				refreshBar.Visible = false;
 			}));
-
-
 		}
 
 		private void DebugLogWindow_FormClosing(object sender, FormClosingEventArgs e)
@@ -79,7 +73,7 @@ namespace File_Converter.View
 		private void saveButton_Click(object sender, EventArgs e)
 		{
 			string path = Path.Combine(Application.StartupPath, "logs.txt");
-			
+
 			using (var tw = new StreamWriter(path))
 			{
 				foreach (ListViewItem item in logsListView.Items)

@@ -23,7 +23,8 @@ namespace File_Converter
 		private Dictionary<string, MaterialButton> generatedSaveButtons = new Dictionary<string, MaterialButton>();
 		private Dictionary<string, byte[]> convertedFiles = new Dictionary<string, byte[]>();
 		private string[] filePaths;
-		MaterialButton saveAllButton = new MaterialButton()
+
+		private MaterialButton saveAllButton = new MaterialButton()
 		{
 			Anchor = AnchorStyles.None,
 			Margin = new Padding(0, 5, 0, 5),
@@ -61,7 +62,7 @@ namespace File_Converter
 			saveFileDialog.Filter = FileType.GetFilter(ArchiveFileType.Zip);
 			saveFileDialog.FileName = "Converted files";
 
-			if(saveFileDialog.ShowDialog() == DialogResult.OK)
+			if (saveFileDialog.ShowDialog() == DialogResult.OK)
 			{
 				Logger.Instance.Enqueue(new Log($"Started saving {convertedFiles.Count} files to {saveFileDialog.FileName}",
 					Log_Status.STARTED));
@@ -208,7 +209,7 @@ namespace File_Converter
 			currentTarget = TextFileType.Parse(convertToExtension);
 
 			//start background worker
-			if(!textFileConversionBackgroundWorker.IsBusy)
+			if (!textFileConversionBackgroundWorker.IsBusy)
 			{
 				convertTextFilesButton.Enabled = false;
 				textFileConversionBackgroundWorker.RunWorkerAsync();
@@ -272,8 +273,8 @@ namespace File_Converter
 					Log_Status.NONE));
 					ThreadPool.QueueUserWorkItem(ProcessTextFileConversion, path);
 				}
-				
-				for(int i = 0; i < filePaths.Length; i++)
+
+				for (int i = 0; i < filePaths.Length; i++)
 				{
 					semaphore.Wait();
 				}
