@@ -9,11 +9,12 @@ namespace File_Converter.Controller
 {
 	public class TextFileConverter : FileConverter
 	{
-		public void PdfToText(Stream stream, string path)
+		public byte[] PdfToText(Stream stream, string path)
 		{
 			OnFileStartConverting(path);
-			
-			List<string> pdfContent= new List<string>();
+
+			MemoryStream resultStream = new MemoryStream();
+			StreamWriter writer = new StreamWriter(resultStream);
 
 			PdfDocument pdf = new PdfDocument(new PdfReader(stream));
 			FilteredEventListener listener = new FilteredEventListener();
@@ -25,14 +26,17 @@ namespace File_Converter.Controller
 			for (int i = 1; i <= numberOfPages; i++)
 			{
 				parser.ProcessPageContent(pdf.GetPage(i));
-				pdfContent.Add(extractionStrategy.GetResultantText());
+				writer.WriteLine(extractionStrategy.GetResultantText());
 				int percent = i * 100 / numberOfPages;
 				OnFileConverting(path, percent, i);
 			}
 
 			pdf.Close();
-			File.WriteAllLines(path, pdfContent, Encoding.UTF8);
+			writer.Flush();
+			resultStream.Seek(0, SeekOrigin.Begin);
 			OnFileConverted(path);
+
+			return resultStream.ToArray();
 		}
 	}
 }

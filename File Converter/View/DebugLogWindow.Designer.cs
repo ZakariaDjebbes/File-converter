@@ -48,9 +48,9 @@
             this.columnHeader2,
             this.columnHeader3});
 			this.logsListView.HideSelection = false;
-			this.logsListView.Location = new System.Drawing.Point(0, 76);
+			this.logsListView.Location = new System.Drawing.Point(0, 88);
 			this.logsListView.Name = "logsListView";
-			this.logsListView.Size = new System.Drawing.Size(1071, 374);
+			this.logsListView.Size = new System.Drawing.Size(1071, 362);
 			this.logsListView.TabIndex = 0;
 			this.logsListView.UseCompatibleStateImageBehavior = false;
 			this.logsListView.View = System.Windows.Forms.View.Details;
@@ -94,7 +94,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.refreshBar.Location = new System.Drawing.Point(12, 58);
 			this.refreshBar.Name = "refreshBar";
-			this.refreshBar.Size = new System.Drawing.Size(1047, 12);
+			this.refreshBar.Size = new System.Drawing.Size(1047, 14);
 			this.refreshBar.Step = 1;
 			this.refreshBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
 			this.refreshBar.TabIndex = 2;

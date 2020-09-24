@@ -10,38 +10,82 @@ using File_Converter.Model;
 using File_Converter.View;
 using MaterialSkin;
 using MaterialSkin.Controls;
-using PDF_Generator.Model;
 
 namespace File_Converter
 {
 	public partial class MainForm : MaterialForm
 	{
+		private SemaphoreSlim semaphore;
+		private readonly MaterialSkinManager materialSkinManager;
 		private DebugLogWindow logWindow = null;
-		private FileType current_target = new FileType();
+		private FileType currentTarget;
 		private Dictionary<string, MaterialProgressBar> generatedProgressBars = new Dictionary<string, MaterialProgressBar>();
 		private Dictionary<string, MaterialButton> generatedSaveButtons = new Dictionary<string, MaterialButton>();
-		private Dictionary<string, MemoryStream> convertedFiles = new Dictionary<string, MemoryStream>();
+		private Dictionary<string, byte[]> convertedFiles = new Dictionary<string, byte[]>();
+		private string[] filePaths;
+		MaterialButton saveAllButton = new MaterialButton()
+		{
+			Anchor = AnchorStyles.None,
+			Margin = new Padding(0, 5, 0, 5),
+			Text = $"Save all files ({ArchiveFileType.Zip.Extension})",
+			Enabled = false
+		};
 
 		public MainForm()
 		{
 			InitializeComponent();
 			//material skin theme
-			var materialSkinManager = MaterialSkinManager.Instance;
+			materialSkinManager = MaterialSkinManager.Instance;
 			materialSkinManager.AddFormToManage(this);
 			materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
-			materialSkinManager.ColorScheme = new ColorScheme(Primary.Indigo500, Primary.Indigo700, Primary.Indigo100, Accent.Pink200, TextShade.WHITE);
+			//Primary.Indigo500, Primary.Indigo700, Primary.Indigo100, Accent.Pink200, TextShade.WHITE
+			materialSkinManager.ColorScheme = new ColorScheme(
+				Color.FromArgb(40, 53, 147),
+				Color.FromArgb(00, 16, 100),
+				Color.FromArgb(95, 95, 196),
+				Color.FromArgb(140, 158, 255),
+				TextShade.WHITE);
+			//saveall button event
+			saveAllButton.Click += SaveAllButton_Click;
 		}
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
 			convertTextFilesButton.Enabled = false;
-
 			//avoid horizonal scrollbar
 			textFilesConversionTableLayoutPanel.Padding = new Padding(20, 0, 20, 0);
 		}
 
+		private void SaveAllButton_Click(object sender, EventArgs e)
+		{
+			saveFileDialog.Filter = FileType.GetFilter(ArchiveFileType.Zip);
+			saveFileDialog.FileName = "Converted files";
+
+			if(saveFileDialog.ShowDialog() == DialogResult.OK)
+			{
+				Logger.Instance.Enqueue(new Log($"Started saving {convertedFiles.Count} files to {saveFileDialog.FileName}",
+					Log_Status.STARTED));
+				FileConverter.SaveMemoryStreamsToZip(saveFileDialog.FileName, convertedFiles, currentTarget);
+			}
+		}
+
+		private void ShowLogsButton_Click(object sender, EventArgs e)
+		{
+			if (logWindow == null)
+			{
+				logWindow = new DebugLogWindow();
+				logWindow.Show();
+			}
+			else
+			{
+				logWindow.Show();
+			}
+		}
+
 		private void TextFileOpenDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
 		{
+			filePaths = textFileOpenDialog.FileNames;
+
 			//empty previously generated progressbars & save buttons
 			generatedProgressBars = new Dictionary<string, MaterialProgressBar>();
 			generatedSaveButtons = new Dictionary<string, MaterialButton>();
@@ -65,7 +109,7 @@ namespace File_Converter
 			textFilesConversionTableLayoutPanel.Controls.Clear();
 			textFilesConversionTableLayoutPanel.RowStyles.Clear();
 			//foreach fileName setup the table
-			foreach (string filePath in textFileOpenDialog.FileNames)
+			foreach (string filePath in filePaths)
 			{
 				string fileName = Path.GetFileName(filePath);
 
@@ -106,6 +150,7 @@ namespace File_Converter
 					Enabled = false,
 				};
 
+				saveFileButton.Click += (sender, EventArgs) => { SaveFileButton_Click(sender, EventArgs, filePath); };
 				textFilesConversionTableLayoutPanel.Controls.Add(saveFileButton, 1, textFilesConversionTableLayoutPanel.RowCount - 3);
 				textFilesConversionTableLayoutPanel.SetRowSpan(saveFileButton, 2);
 
@@ -113,46 +158,34 @@ namespace File_Converter
 				generatedSaveButtons.Add(filePath, saveFileButton);
 			}
 
-			MaterialButton showLogsButton = new MaterialButton()
-			{
-				Anchor = AnchorStyles.None,
-				Margin = new Padding(0, 5, 0, 5),
-				Text = "Show conversion logs",
-			};
-
-			showLogsButton.Click += ShowLogsButton_Click;
 			textFilesConversionTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-			textFilesConversionTableLayoutPanel.Controls.Add(showLogsButton, 0, textFilesConversionTableLayoutPanel.RowCount);
-			textFilesConversionTableLayoutPanel.RowCount++;
-
-			MaterialButton saveAllButton = new MaterialButton()
-			{
-				Anchor = AnchorStyles.None,
-				Margin = new Padding(0, 5, 0, 5),
-				Text = "Save all files (Zip)",
-				Enabled = false
-			};
-
+			textFilesConversionTableLayoutPanel.SetColumnSpan(saveAllButton, 2);
 			textFilesConversionTableLayoutPanel.Controls.Add(saveAllButton, 1, textFilesConversionTableLayoutPanel.RowCount - 1);
+			textFilesConversionTableLayoutPanel.RowCount++;
 
 			//add a last auto size row to fill up blank spaces
 			textFilesConversionTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 			textFilesConversionTableLayoutPanel.RowCount++;
-			convertTextFilesButton.Enabled = true;
 
 			textFilesConversionTableLayoutPanel.ResumeLayout();
+
+			//enable conver button because new files!
+			convertTextFilesButton.Enabled = true;
+			saveAllButton.Enabled = false;
 		}
 
-		private void ShowLogsButton_Click(object sender, EventArgs e)
+		private void SaveFileButton_Click(object sender, EventArgs e, string filePath)
 		{
-			if(logWindow == null)
+			saveFileDialog.Filter = currentTarget.GetFilter();
+			saveFileDialog.FileName = Path.GetFileNameWithoutExtension(filePath);
+
+			if (saveFileDialog.ShowDialog() == DialogResult.OK)
 			{
-				logWindow = new DebugLogWindow();
-				logWindow.Show();
-			}
-			else
-			{
-				logWindow.Show();
+				byte[] bytes = convertedFiles[filePath];
+				string saveTo = saveFileDialog.FileName;
+				Logger.Instance.Enqueue(new Log($"Started saving file {Path.GetFileName(filePath)} to {saveTo}",
+					Log_Status.STARTED));
+				FileConverter.SaveMemoryStreamToDisk(saveTo, bytes);
 			}
 		}
 
@@ -169,18 +202,21 @@ namespace File_Converter
 		private void ConvertTextFileButton_Click(object sender, EventArgs e)
 		{
 			//erase previous data
-			convertedFiles = new Dictionary<string, MemoryStream>();
+			convertedFiles = new Dictionary<string, byte[]>();
 			string convertToExtension = textFileConvertToComboBox.SelectedValue as string;
 
-			current_target = TextFileType.Parse(convertToExtension);
+			currentTarget = TextFileType.Parse(convertToExtension);
 
 			//start background worker
 			if(!textFileConversionBackgroundWorker.IsBusy)
 			{
+				convertTextFilesButton.Enabled = false;
 				textFileConversionBackgroundWorker.RunWorkerAsync();
 			}
 			else
 			{
+				Logger.Instance.Enqueue(new Log($"Trying to convert text files while {nameof(textFileConversionBackgroundWorker)} is busy",
+					Log_Status.BUSY));
 				MessageBox.Show($"You are currently converting files, you cannot start a new conversion until the ongoing one finishes or you cancel it.",
 				"Worker currently busy",
 				MessageBoxButtons.OK,
@@ -190,7 +226,7 @@ namespace File_Converter
 
 		private void OnFileStartConverting(object sender, ConvertionArgs e)
 		{
-			Logger.Instance.Enqueue(new Log($"Thread effectivly [{Thread.CurrentThread.ManagedThreadId}] started converting file",
+			Logger.Instance.Enqueue(new Log($"Thread effectivly [{Thread.CurrentThread.ManagedThreadId}] started converting file to {currentTarget.Extension}",
 					Log_Status.STARTED));
 		}
 
@@ -203,8 +239,8 @@ namespace File_Converter
 				bar.Value = e.ConversionPercent;
 			}));
 
-			Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] converting > {nameof(e.CurrentLine)} : {e.CurrentLine} | {nameof(e.ConversionPercent)} : {e.ConversionPercent}",
-					Log_Status.ONGOING));
+			//Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] converting > {nameof(e.CurrentLine)} : {e.CurrentLine} | {nameof(e.ConversionPercent)} : {e.ConversionPercent}",
+			//		Log_Status.ONGOING));
 		}
 
 		private void OnFileConverted(object sender, ConvertionArgs e)
@@ -216,28 +252,45 @@ namespace File_Converter
 				saveButton.Enabled = true;
 			}));
 
-			Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] finished converting file",
+			Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] finished converting file to {currentTarget.Extension}",
 					Log_Status.DONE));
 		}
 
 		private void TextFileConversionBackgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
 		{
-			string[] filePaths = textFileOpenDialog.FileNames;
 			Logger.Instance.Enqueue(new Log($"Text conversion background worker [{Thread.CurrentThread.ManagedThreadId}] started > {nameof(filePaths)} : {filePaths.Length} files to convert",
 				Log_Status.STARTED));
 
 			if ((generatedProgressBars.Count == generatedSaveButtons.Count) &&
 				(generatedSaveButtons.Count == filePaths.Length))
 			{
+				semaphore = new SemaphoreSlim(0);
+
 				foreach (string path in filePaths)
 				{
-					Logger.Instance.Enqueue(new Log($"Queued user work on threadpool for file at [{path}]",
+					Logger.Instance.Enqueue(new Log($"Queued user work on threadpool for file at [{path}] to {currentTarget.Extension}",
 					Log_Status.NONE));
 					ThreadPool.QueueUserWorkItem(ProcessTextFileConversion, path);
 				}
+				
+				for(int i = 0; i < filePaths.Length; i++)
+				{
+					semaphore.Wait();
+				}
+
+				saveAllButton.Invoke((Action)(() =>
+				{
+					saveAllButton.Enabled = true;
+				}));
 			}
 			else
 			{
+				Logger.Instance.Enqueue(new Log($"Text conversion background worker [{Thread.CurrentThread.ManagedThreadId}] component number mismatch " +
+					$" > {nameof(generatedProgressBars.Count)} : {generatedProgressBars.Count} " +
+					$" > {nameof(generatedSaveButtons.Count)} : {generatedSaveButtons.Count}" +
+					$" > {nameof(filePaths.Length)} : {filePaths.Length}",
+				Log_Status.ERROR));
+
 				MessageBox.Show($"A problem with selected files occured, did you delete a selected file from your disk?",
 				"An error has occured",
 				MessageBoxButtons.OK,
@@ -257,7 +310,7 @@ namespace File_Converter
 
 			if (stream != null)
 			{
-				if (current_target.Extension.Equals(TextFileType.Pdf.Extension))
+				if (currentTarget.Extension.Equals(TextFileType.Pdf.Extension))
 				{
 					PdfFileConverter pdfFileConverter = new PdfFileConverter();
 					pdfFileConverter.FileStartConverting += OnFileStartConverting;
@@ -265,14 +318,14 @@ namespace File_Converter
 					pdfFileConverter.FileConverted += OnFileConverted;
 
 					Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] launched conversion of file [{filePath}]",
-		Log_Status.NONE, pdfFileConverter));
+						Log_Status.NONE, pdfFileConverter));
 					convertedFiles.Add(filePath, pdfFileConverter.TextToPdf(stream, filePath));
 				}
-				else if (current_target.Extension.Equals(TextFileType.Word.Extension))
+				else if (currentTarget.Extension.Equals(TextFileType.Word.Extension))
 				{
 					NotYetImplementedMessageBox();
 				}
-				else if (current_target.Extension.Equals(TextFileType.Txt.Extension))
+				else if (currentTarget.Extension.Equals(TextFileType.Txt.Extension))
 				{
 					TextFileConverter textFileConverter = new TextFileConverter();
 					textFileConverter.FileStartConverting += OnFileStartConverting;
@@ -280,27 +333,38 @@ namespace File_Converter
 					textFileConverter.FileConverted += OnFileConverted;
 
 					Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] started conversion of file [{filePath}]",
-		Log_Status.NONE, textFileConverter));
-					textFileConverter.PdfToText(stream, ""/*path*/);
+						Log_Status.NONE, textFileConverter));
+					convertedFiles.Add(filePath, textFileConverter.PdfToText(stream, filePath));
 				}
 			}
 			else
 			{
+				Logger.Instance.Enqueue(new Log($"Selected file at [{filePath}] was not found on disk",
+				Log_Status.ERROR));
 				MessageBox.Show($"The selected file was not found on disk, did you delete the file after selecting it?",
 				"An error has occured",
 				MessageBoxButtons.OK,
 				MessageBoxIcon.Error);
 			}
 
+			semaphore.Release();
 			return;
 		}
 
 		private void NotYetImplementedMessageBox()
 		{
+			Logger.Instance.Enqueue(new Log($"Selected target feature isn't implemented",
+				Log_Status.NOT_IMPLEMENTED));
 			MessageBox.Show($"The selected file target is not yet implemented",
 				"Not yet implemented",
 				MessageBoxButtons.OK,
 				MessageBoxIcon.Information);
+		}
+
+		private void darkModeSwitch_CheckedChanged(object sender, EventArgs e)
+		{
+			materialSkinManager.Theme = materialSkinManager.Theme == MaterialSkinManager.Themes.DARK ? MaterialSkinManager.Themes.LIGHT : MaterialSkinManager.Themes.DARK;
+			Invalidate();
 		}
 	}
 }

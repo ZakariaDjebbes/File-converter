@@ -41,20 +41,33 @@
 			this.convertTextFilesTitleLabel = new MaterialSkin.Controls.MaterialLabel();
 			this.materialLabel2 = new MaterialSkin.Controls.MaterialLabel();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+			this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
 			this.drawerImageList = new System.Windows.Forms.ImageList(this.components);
 			this.textFileOpenDialog = new System.Windows.Forms.OpenFileDialog();
 			this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
 			this.textFileConversionBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+			this.materialLabel5 = new MaterialSkin.Controls.MaterialLabel();
+			this.materialLabel4 = new MaterialSkin.Controls.MaterialLabel();
+			this.darkModeSwitch = new MaterialSkin.Controls.MaterialSwitch();
+			this.materialLabel3 = new MaterialSkin.Controls.MaterialLabel();
+			this.materialLabel1 = new MaterialSkin.Controls.MaterialLabel();
+			this.showLogsButton = new MaterialSkin.Controls.MaterialButton();
 			this.materialTabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
+			this.tabPage3.SuspendLayout();
+			this.tableLayoutPanel3.SuspendLayout();
+			this.tableLayoutPanel4.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// materialTabControl1
 			// 
 			this.materialTabControl1.Controls.Add(this.tabPage1);
 			this.materialTabControl1.Controls.Add(this.tabPage2);
+			this.materialTabControl1.Controls.Add(this.tabPage3);
 			this.materialTabControl1.Depth = 0;
 			this.materialTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.materialTabControl1.ImageList = this.drawerImageList;
@@ -240,12 +253,60 @@
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Video Files";
 			// 
+			// tabPage3
+			// 
+			this.tabPage3.Controls.Add(this.tableLayoutPanel3);
+			this.tabPage3.Controls.Add(this.tableLayoutPanel4);
+			this.tabPage3.ImageKey = "settings_icon";
+			this.tabPage3.Location = new System.Drawing.Point(4, 25);
+			this.tabPage3.Name = "tabPage3";
+			this.tabPage3.Size = new System.Drawing.Size(1272, 691);
+			this.tabPage3.TabIndex = 2;
+			this.tabPage3.Text = "Settings";
+			this.tabPage3.UseVisualStyleBackColor = true;
+			// 
+			// tableLayoutPanel3
+			// 
+			this.tableLayoutPanel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.tableLayoutPanel3.ColumnCount = 2;
+			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.tableLayoutPanel3.Controls.Add(this.materialLabel5, 0, 1);
+			this.tableLayoutPanel3.Controls.Add(this.materialLabel4, 0, 0);
+			this.tableLayoutPanel3.Controls.Add(this.darkModeSwitch, 1, 0);
+			this.tableLayoutPanel3.Controls.Add(this.showLogsButton, 1, 1);
+			this.tableLayoutPanel3.Location = new System.Drawing.Point(58, 170);
+			this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+			this.tableLayoutPanel3.RowCount = 2;
+			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanel3.Size = new System.Drawing.Size(1154, 100);
+			this.tableLayoutPanel3.TabIndex = 9;
+			// 
+			// tableLayoutPanel4
+			// 
+			this.tableLayoutPanel4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.tableLayoutPanel4.ColumnCount = 1;
+			this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel4.Controls.Add(this.materialLabel1, 0, 0);
+			this.tableLayoutPanel4.Controls.Add(this.materialLabel3, 0, 1);
+			this.tableLayoutPanel4.Location = new System.Drawing.Point(58, 18);
+			this.tableLayoutPanel4.Name = "tableLayoutPanel4";
+			this.tableLayoutPanel4.RowCount = 2;
+			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 38.26087F));
+			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 61.73913F));
+			this.tableLayoutPanel4.Size = new System.Drawing.Size(1154, 93);
+			this.tableLayoutPanel4.TabIndex = 8;
+			// 
 			// drawerImageList
 			// 
 			this.drawerImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("drawerImageList.ImageStream")));
 			this.drawerImageList.TransparentColor = System.Drawing.Color.Transparent;
 			this.drawerImageList.Images.SetKeyName(0, "text_icon");
 			this.drawerImageList.Images.SetKeyName(1, "video_icon");
+			this.drawerImageList.Images.SetKeyName(2, "settings_icon");
 			// 
 			// textFileOpenDialog
 			// 
@@ -257,6 +318,99 @@
 			// textFileConversionBackgroundWorker
 			// 
 			this.textFileConversionBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.TextFileConversionBackgroundWorker_DoWork);
+			// 
+			// materialLabel5
+			// 
+			this.materialLabel5.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.materialLabel5.AutoSize = true;
+			this.materialLabel5.Depth = 0;
+			this.materialLabel5.Font = new System.Drawing.Font("Roboto", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			this.materialLabel5.Location = new System.Drawing.Point(10, 65);
+			this.materialLabel5.Margin = new System.Windows.Forms.Padding(10, 0, 3, 0);
+			this.materialLabel5.MouseState = MaterialSkin.MouseState.HOVER;
+			this.materialLabel5.Name = "materialLabel5";
+			this.materialLabel5.Size = new System.Drawing.Size(69, 19);
+			this.materialLabel5.TabIndex = 2;
+			this.materialLabel5.Text = "View logs";
+			// 
+			// materialLabel4
+			// 
+			this.materialLabel4.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.materialLabel4.AutoSize = true;
+			this.materialLabel4.Depth = 0;
+			this.materialLabel4.Font = new System.Drawing.Font("Roboto", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			this.materialLabel4.Location = new System.Drawing.Point(10, 15);
+			this.materialLabel4.Margin = new System.Windows.Forms.Padding(10, 0, 3, 0);
+			this.materialLabel4.MouseState = MaterialSkin.MouseState.HOVER;
+			this.materialLabel4.Name = "materialLabel4";
+			this.materialLabel4.Size = new System.Drawing.Size(129, 19);
+			this.materialLabel4.TabIndex = 0;
+			this.materialLabel4.Text = "Toggle dark mode";
+			// 
+			// darkModeSwitch
+			// 
+			this.darkModeSwitch.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.darkModeSwitch.AutoSize = true;
+			this.darkModeSwitch.Depth = 0;
+			this.darkModeSwitch.Location = new System.Drawing.Point(617, 6);
+			this.darkModeSwitch.Margin = new System.Windows.Forms.Padding(0, 6, 4, 6);
+			this.darkModeSwitch.MouseLocation = new System.Drawing.Point(-1, -1);
+			this.darkModeSwitch.MouseState = MaterialSkin.MouseState.HOVER;
+			this.darkModeSwitch.Name = "darkModeSwitch";
+			this.darkModeSwitch.Ripple = true;
+			this.darkModeSwitch.Size = new System.Drawing.Size(58, 37);
+			this.darkModeSwitch.TabIndex = 1;
+			this.darkModeSwitch.UseVisualStyleBackColor = true;
+			this.darkModeSwitch.CheckedChanged += new System.EventHandler(this.darkModeSwitch_CheckedChanged);
+			// 
+			// materialLabel3
+			// 
+			this.materialLabel3.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.materialLabel3.AutoSize = true;
+			this.materialLabel3.Depth = 0;
+			this.materialLabel3.Font = new System.Drawing.Font("Roboto Medium", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
+			this.materialLabel3.FontType = MaterialSkin.MaterialSkinManager.fontType.Subtitle2;
+			this.materialLabel3.Location = new System.Drawing.Point(467, 55);
+			this.materialLabel3.MouseState = MaterialSkin.MouseState.HOVER;
+			this.materialLabel3.Name = "materialLabel3";
+			this.materialLabel3.Size = new System.Drawing.Size(220, 17);
+			this.materialLabel3.TabIndex = 1;
+			this.materialLabel3.Text = "Change settings of the application";
+			// 
+			// materialLabel1
+			// 
+			this.materialLabel1.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.materialLabel1.AutoSize = true;
+			this.materialLabel1.Depth = 0;
+			this.materialLabel1.Font = new System.Drawing.Font("Roboto", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
+			this.materialLabel1.FontType = MaterialSkin.MaterialSkinManager.fontType.H5;
+			this.materialLabel1.Location = new System.Drawing.Point(533, 3);
+			this.materialLabel1.MouseState = MaterialSkin.MouseState.HOVER;
+			this.materialLabel1.Name = "materialLabel1";
+			this.materialLabel1.Size = new System.Drawing.Size(88, 29);
+			this.materialLabel1.TabIndex = 0;
+			this.materialLabel1.Text = "Settings";
+			this.materialLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// showLogsButton
+			// 
+			this.showLogsButton.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.showLogsButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.showLogsButton.Depth = 0;
+			this.showLogsButton.DrawShadows = true;
+			this.showLogsButton.HighEmphasis = true;
+			this.showLogsButton.Icon = null;
+			this.showLogsButton.Location = new System.Drawing.Point(588, 57);
+			this.showLogsButton.Margin = new System.Windows.Forms.Padding(50, 6, 4, 6);
+			this.showLogsButton.MouseState = MaterialSkin.MouseState.HOVER;
+			this.showLogsButton.Name = "showLogsButton";
+			this.showLogsButton.Size = new System.Drawing.Size(165, 36);
+			this.showLogsButton.TabIndex = 3;
+			this.showLogsButton.Text = "View runtime logs";
+			this.showLogsButton.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+			this.showLogsButton.UseAccentColor = false;
+			this.showLogsButton.UseVisualStyleBackColor = true;
+			this.showLogsButton.Click += new System.EventHandler(this.ShowLogsButton_Click);
 			// 
 			// MainForm
 			// 
@@ -278,6 +432,11 @@
 			this.tableLayoutPanel2.PerformLayout();
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
+			this.tabPage3.ResumeLayout(false);
+			this.tableLayoutPanel3.ResumeLayout(false);
+			this.tableLayoutPanel3.PerformLayout();
+			this.tableLayoutPanel4.ResumeLayout(false);
+			this.tableLayoutPanel4.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -298,6 +457,15 @@
 		private System.Windows.Forms.TableLayoutPanel textFilesConversionTableLayoutPanel;
 		private MaterialSkin.Controls.MaterialButton convertTextFilesButton;
 		private System.ComponentModel.BackgroundWorker textFileConversionBackgroundWorker;
+		private System.Windows.Forms.TabPage tabPage3;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+		private MaterialSkin.Controls.MaterialLabel materialLabel5;
+		private MaterialSkin.Controls.MaterialLabel materialLabel4;
+		private MaterialSkin.Controls.MaterialSwitch darkModeSwitch;
+		private MaterialSkin.Controls.MaterialLabel materialLabel1;
+		private MaterialSkin.Controls.MaterialLabel materialLabel3;
+		private MaterialSkin.Controls.MaterialButton showLogsButton;
 	}
 }
 

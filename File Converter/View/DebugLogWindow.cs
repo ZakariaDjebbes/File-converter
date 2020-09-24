@@ -22,6 +22,8 @@ namespace File_Converter.View
 				refreshBar.Value = 0;
 				refreshBar.Visible = true;
 			}));
+
+
 		}
 
 		private void OnLogging(object sender, LogArgs e)
@@ -30,6 +32,8 @@ namespace File_Converter.View
 			{
 				refreshBar.Value = e.percent;
 			}));
+
+
 		}
 
 		private void OnEndLogging(object sender, EventArgs e)
@@ -39,6 +43,8 @@ namespace File_Converter.View
 				refreshBar.Value = 0;
 				refreshBar.Visible = false;
 			}));
+
+
 		}
 
 		private void DebugLogWindow_FormClosing(object sender, FormClosingEventArgs e)

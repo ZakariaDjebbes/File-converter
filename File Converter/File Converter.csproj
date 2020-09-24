@@ -79,6 +79,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -95,6 +96,7 @@
     <Compile Include="Controller\TextFileConverter.cs" />
     <Compile Include="Debug\Log.cs" />
     <Compile Include="Debug\Logger.cs" />
+    <Compile Include="Model\ArchiveFileType.cs" />
     <Compile Include="Model\FileType.cs" />
     <Compile Include="Model\TextFileType.cs" />
     <Compile Include="View\DebugLogWindow.cs">

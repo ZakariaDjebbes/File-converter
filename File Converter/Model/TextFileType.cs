@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using PDF_Generator.Model;
+using System.Reflection;
 
 namespace File_Converter.Model
 {
@@ -30,15 +30,10 @@ namespace File_Converter.Model
 
 		public static TextFileType Parse(string extension)
 		{
-			Exception exception = new Exception($"Cannot find any text file type for extension {extension} in {nameof(TextFileType)}");
-			
-			if(string.IsNullOrEmpty(extension))
+			if (string.IsNullOrEmpty(extension) && !valuePairs.ContainsKey(extension))
 			{
-				throw exception;
-			}
+				Exception exception = new Exception($"Cannot find any {MethodBase.GetCurrentMethod().DeclaringType} for extension {extension} in {nameof(TextFileType)}");
 
-			if(!valuePairs.ContainsKey(extension))
-			{
 				throw exception;
 			}
 
