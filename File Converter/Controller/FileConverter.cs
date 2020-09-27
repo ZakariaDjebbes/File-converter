@@ -24,6 +24,8 @@ namespace File_Converter.Controller
 		public EventHandler<ConvertingArgs> FileConverting;
 		public EventHandler<ConvertionArgs> FileConverted;
 
+		public abstract byte[] ConvertFile(Stream stream, string path);
+
 		protected virtual void OnFileStartConverting(string path)
 			=> FileStartConverting?.Invoke(this, new ConvertionArgs() { Path = path });
 
@@ -56,13 +58,20 @@ namespace File_Converter.Controller
 			return lineCount;
 		}
 
-		public static void SaveMemoryStreamToDisk(string path, byte[] bytes)
+		public static void SaveMemoryStreamToDisk(string path, MemoryStream memoryStream)
 		{
-			File.WriteAllBytes(path, bytes);
-			Logger.Instance.Enqueue(new Log($"file saved at [{path}]", Log_Status.SAVED));
+			memoryStream.Flush();
+			memoryStream.Position = 0;
+			memoryStream.CopyTo(memoryStream);
 		}
 
-		public static void SaveMemoryStreamsToZip(string path, IEnumerable<KeyValuePair<string, byte[]>> byteArrays, FileType fileType)
+		public static void SaveByteArrayToDisk(string path, byte[] bytes)
+		{
+			File.WriteAllBytes(path, bytes);
+			Logger.Instance.Enqueue(new Log($"file saved at [{path}]", LogStatus.SAVED));
+		}
+
+		public static void SaveByteArrayToZip(string path, IEnumerable<KeyValuePair<string, byte[]>> byteArrays, FileType fileType)
 		{
 			using (var fileStream = new FileStream(path, FileMode.Create))
 			{
@@ -76,7 +85,7 @@ namespace File_Converter.Controller
 						using (var zipStream = zipArchiveEntry.Open())
 							zipStream.Write(pdfBytes, 0, pdfBytes.Length);
 
-						Logger.Instance.Enqueue(new Log($"file [{fileName}] saved in zip file at [{path}]", Log_Status.SAVED));
+						Logger.Instance.Enqueue(new Log($"file [{fileName}] saved in zip file at [{path}]", LogStatus.SAVED));
 					}
 				}
 			}

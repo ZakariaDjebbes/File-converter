@@ -361,7 +361,7 @@
 			this.darkModeSwitch.Size = new System.Drawing.Size(58, 37);
 			this.darkModeSwitch.TabIndex = 1;
 			this.darkModeSwitch.UseVisualStyleBackColor = true;
-			this.darkModeSwitch.CheckedChanged += new System.EventHandler(this.darkModeSwitch_CheckedChanged);
+			this.darkModeSwitch.CheckedChanged += new System.EventHandler(this.DarkModeSwitch_CheckedChanged);
 			// 
 			// materialLabel3
 			// 

@@ -22,6 +22,7 @@ namespace File_Converter
 		private Dictionary<string, MaterialProgressBar> generatedProgressBars = new Dictionary<string, MaterialProgressBar>();
 		private Dictionary<string, MaterialButton> generatedSaveButtons = new Dictionary<string, MaterialButton>();
 		private Dictionary<string, byte[]> convertedFiles = new Dictionary<string, byte[]>();
+		private Dictionary<string, MemoryStream> convertedStreams = new Dictionary<string, MemoryStream>();
 		private string[] filePaths;
 
 		private MaterialButton saveAllButton = new MaterialButton()
@@ -65,8 +66,8 @@ namespace File_Converter
 			if (saveFileDialog.ShowDialog() == DialogResult.OK)
 			{
 				Logger.Instance.Enqueue(new Log($"Started saving {convertedFiles.Count} files to {saveFileDialog.FileName}",
-					Log_Status.STARTED));
-				FileConverter.SaveMemoryStreamsToZip(saveFileDialog.FileName, convertedFiles, currentTarget);
+					LogStatus.STARTED));
+				FileConverter.SaveByteArrayToZip(saveFileDialog.FileName, convertedFiles, currentTarget);
 			}
 		}
 
@@ -185,8 +186,8 @@ namespace File_Converter
 				byte[] bytes = convertedFiles[filePath];
 				string saveTo = saveFileDialog.FileName;
 				Logger.Instance.Enqueue(new Log($"Started saving file {Path.GetFileName(filePath)} to {saveTo}",
-					Log_Status.STARTED));
-				FileConverter.SaveMemoryStreamToDisk(saveTo, bytes);
+					LogStatus.STARTED));
+				FileConverter.SaveByteArrayToDisk(saveTo, bytes);
 			}
 		}
 
@@ -217,7 +218,7 @@ namespace File_Converter
 			else
 			{
 				Logger.Instance.Enqueue(new Log($"Trying to convert text files while {nameof(textFileConversionBackgroundWorker)} is busy",
-					Log_Status.BUSY));
+					LogStatus.BUSY));
 				MessageBox.Show($"You are currently converting files, you cannot start a new conversion until the ongoing one finishes or you cancel it.",
 				"Worker currently busy",
 				MessageBoxButtons.OK,
@@ -228,7 +229,7 @@ namespace File_Converter
 		private void OnFileStartConverting(object sender, ConvertionArgs e)
 		{
 			Logger.Instance.Enqueue(new Log($"Thread effectivly [{Thread.CurrentThread.ManagedThreadId}] started converting file to {currentTarget.Extension}",
-					Log_Status.STARTED));
+					LogStatus.STARTED));
 		}
 
 		private void OnFileConverting(object sender, ConvertingArgs e)
@@ -254,13 +255,13 @@ namespace File_Converter
 			}));
 
 			Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] finished converting file to {currentTarget.Extension}",
-					Log_Status.DONE));
+					LogStatus.DONE));
 		}
 
 		private void TextFileConversionBackgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
 		{
 			Logger.Instance.Enqueue(new Log($"Text conversion background worker [{Thread.CurrentThread.ManagedThreadId}] started > {nameof(filePaths)} : {filePaths.Length} files to convert",
-				Log_Status.STARTED));
+				LogStatus.STARTED));
 
 			if ((generatedProgressBars.Count == generatedSaveButtons.Count) &&
 				(generatedSaveButtons.Count == filePaths.Length))
@@ -270,7 +271,7 @@ namespace File_Converter
 				foreach (string path in filePaths)
 				{
 					Logger.Instance.Enqueue(new Log($"Queued user work on threadpool for file at [{path}] to {currentTarget.Extension}",
-					Log_Status.NONE));
+					LogStatus.NONE));
 					ThreadPool.QueueUserWorkItem(ProcessTextFileConversion, path);
 				}
 
@@ -290,7 +291,7 @@ namespace File_Converter
 					$" > {nameof(generatedProgressBars.Count)} : {generatedProgressBars.Count} " +
 					$" > {nameof(generatedSaveButtons.Count)} : {generatedSaveButtons.Count}" +
 					$" > {nameof(filePaths.Length)} : {filePaths.Length}",
-				Log_Status.ERROR));
+				LogStatus.ERROR));
 
 				MessageBox.Show($"A problem with selected files occured, did you delete a selected file from your disk?",
 				"An error has occured",
@@ -319,8 +320,8 @@ namespace File_Converter
 					pdfFileConverter.FileConverted += OnFileConverted;
 
 					Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] launched conversion of file [{filePath}]",
-						Log_Status.NONE, pdfFileConverter));
-					convertedFiles.Add(filePath, pdfFileConverter.TextToPdf(stream, filePath));
+						LogStatus.NONE, pdfFileConverter));
+					convertedFiles.Add(filePath, pdfFileConverter.ConvertFile(stream, filePath));
 				}
 				else if (currentTarget.Extension.Equals(TextFileType.Word.Extension))
 				{
@@ -334,14 +335,14 @@ namespace File_Converter
 					textFileConverter.FileConverted += OnFileConverted;
 
 					Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] started conversion of file [{filePath}]",
-						Log_Status.NONE, textFileConverter));
-					convertedFiles.Add(filePath, textFileConverter.PdfToText(stream, filePath));
+						LogStatus.NONE, textFileConverter));
+					convertedFiles.Add(filePath, textFileConverter.ConvertFile(stream, filePath));
 				}
 			}
 			else
 			{
 				Logger.Instance.Enqueue(new Log($"Selected file at [{filePath}] was not found on disk",
-				Log_Status.ERROR));
+				LogStatus.ERROR));
 				MessageBox.Show($"The selected file was not found on disk, did you delete the file after selecting it?",
 				"An error has occured",
 				MessageBoxButtons.OK,
@@ -355,14 +356,14 @@ namespace File_Converter
 		private void NotYetImplementedMessageBox()
 		{
 			Logger.Instance.Enqueue(new Log($"Selected target feature isn't implemented",
-				Log_Status.NOT_IMPLEMENTED));
+				LogStatus.NOT_IMPLEMENTED));
 			MessageBox.Show($"The selected file target is not yet implemented",
 				"Not yet implemented",
 				MessageBoxButtons.OK,
 				MessageBoxIcon.Information);
 		}
 
-		private void darkModeSwitch_CheckedChanged(object sender, EventArgs e)
+		private void DarkModeSwitch_CheckedChanged(object sender, EventArgs e)
 		{
 			materialSkinManager.Theme = materialSkinManager.Theme == MaterialSkinManager.Themes.DARK ? MaterialSkinManager.Themes.LIGHT : MaterialSkinManager.Themes.DARK;
 			Invalidate();
