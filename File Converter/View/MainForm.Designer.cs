@@ -34,26 +34,27 @@
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.textFilesConversionTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-			this.convertTextFilesButton = new MaterialSkin.Controls.MaterialButton();
+			this.textFileConversionCancelButton = new MaterialSkin.Controls.MaterialButton();
 			this.chooseTextFileButton = new MaterialSkin.Controls.MaterialButton();
 			this.textFileConvertToComboBox = new MaterialSkin.Controls.MaterialComboBox();
+			this.convertTextFilesButton = new MaterialSkin.Controls.MaterialButton();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.convertTextFilesTitleLabel = new MaterialSkin.Controls.MaterialLabel();
 			this.materialLabel2 = new MaterialSkin.Controls.MaterialLabel();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-			this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
-			this.drawerImageList = new System.Windows.Forms.ImageList(this.components);
-			this.textFileOpenDialog = new System.Windows.Forms.OpenFileDialog();
-			this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-			this.textFileConversionBackgroundWorker = new System.ComponentModel.BackgroundWorker();
 			this.materialLabel5 = new MaterialSkin.Controls.MaterialLabel();
 			this.materialLabel4 = new MaterialSkin.Controls.MaterialLabel();
 			this.darkModeSwitch = new MaterialSkin.Controls.MaterialSwitch();
-			this.materialLabel3 = new MaterialSkin.Controls.MaterialLabel();
-			this.materialLabel1 = new MaterialSkin.Controls.MaterialLabel();
 			this.showLogsButton = new MaterialSkin.Controls.MaterialButton();
+			this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+			this.materialLabel1 = new MaterialSkin.Controls.MaterialLabel();
+			this.materialLabel3 = new MaterialSkin.Controls.MaterialLabel();
+			this.drawerImageList = new System.Windows.Forms.ImageList(this.components);
+			this.fileOpenDialog = new System.Windows.Forms.OpenFileDialog();
+			this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+			this.textFileConversionBackgroundWorker = new System.ComponentModel.BackgroundWorker();
 			this.materialTabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
@@ -73,6 +74,7 @@
 			this.materialTabControl1.ImageList = this.drawerImageList;
 			this.materialTabControl1.Location = new System.Drawing.Point(0, 0);
 			this.materialTabControl1.MouseState = MaterialSkin.MouseState.HOVER;
+			this.materialTabControl1.Multiline = true;
 			this.materialTabControl1.Name = "materialTabControl1";
 			this.materialTabControl1.SelectedIndex = 0;
 			this.materialTabControl1.Size = new System.Drawing.Size(1280, 720);
@@ -113,45 +115,47 @@
 			// 
 			this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.tableLayoutPanel2.ColumnCount = 1;
-			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 55.34591F));
-			this.tableLayoutPanel2.Controls.Add(this.convertTextFilesButton, 0, 2);
+			this.tableLayoutPanel2.ColumnCount = 2;
+			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanel2.Controls.Add(this.textFileConversionCancelButton, 0, 2);
 			this.tableLayoutPanel2.Controls.Add(this.chooseTextFileButton, 0, 0);
 			this.tableLayoutPanel2.Controls.Add(this.textFileConvertToComboBox, 0, 1);
+			this.tableLayoutPanel2.Controls.Add(this.convertTextFilesButton, 1, 2);
 			this.tableLayoutPanel2.Location = new System.Drawing.Point(39, 126);
 			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
 			this.tableLayoutPanel2.RowCount = 3;
-			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 35.55556F));
-			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 31.66667F));
+			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.14917F));
+			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 35.35912F));
+			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 31.49171F));
 			this.tableLayoutPanel2.Size = new System.Drawing.Size(1154, 180);
 			this.tableLayoutPanel2.TabIndex = 8;
 			// 
-			// convertTextFilesButton
+			// textFileConversionCancelButton
 			// 
-			this.convertTextFilesButton.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.convertTextFilesButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.convertTextFilesButton.Depth = 0;
-			this.convertTextFilesButton.DrawShadows = true;
-			this.convertTextFilesButton.Enabled = false;
-			this.convertTextFilesButton.HighEmphasis = true;
-			this.convertTextFilesButton.Icon = null;
-			this.convertTextFilesButton.Location = new System.Drawing.Point(512, 138);
-			this.convertTextFilesButton.Margin = new System.Windows.Forms.Padding(4, 15, 4, 4);
-			this.convertTextFilesButton.MouseState = MaterialSkin.MouseState.HOVER;
-			this.convertTextFilesButton.Name = "convertTextFilesButton";
-			this.convertTextFilesButton.Size = new System.Drawing.Size(129, 36);
-			this.convertTextFilesButton.TabIndex = 4;
-			this.convertTextFilesButton.Text = "Convert files";
-			this.convertTextFilesButton.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
-			this.convertTextFilesButton.UseAccentColor = false;
-			this.convertTextFilesButton.UseVisualStyleBackColor = true;
-			this.convertTextFilesButton.Click += new System.EventHandler(this.ConvertTextFileButton_Click);
+			this.textFileConversionCancelButton.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.textFileConversionCancelButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.textFileConversionCancelButton.Depth = 0;
+			this.textFileConversionCancelButton.DrawShadows = true;
+			this.textFileConversionCancelButton.HighEmphasis = true;
+			this.textFileConversionCancelButton.Icon = null;
+			this.textFileConversionCancelButton.Location = new System.Drawing.Point(220, 138);
+			this.textFileConversionCancelButton.Margin = new System.Windows.Forms.Padding(4, 15, 4, 4);
+			this.textFileConversionCancelButton.MouseState = MaterialSkin.MouseState.HOVER;
+			this.textFileConversionCancelButton.Name = "textFileConversionCancelButton";
+			this.textFileConversionCancelButton.Size = new System.Drawing.Size(136, 36);
+			this.textFileConversionCancelButton.TabIndex = 5;
+			this.textFileConversionCancelButton.Text = "Cancel / Clear";
+			this.textFileConversionCancelButton.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+			this.textFileConversionCancelButton.UseAccentColor = false;
+			this.textFileConversionCancelButton.UseVisualStyleBackColor = true;
+			this.textFileConversionCancelButton.Click += new System.EventHandler(this.TextFileConversionCancelButton_Click);
 			// 
 			// chooseTextFileButton
 			// 
 			this.chooseTextFileButton.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.chooseTextFileButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.tableLayoutPanel2.SetColumnSpan(this.chooseTextFileButton, 2);
 			this.chooseTextFileButton.Depth = 0;
 			this.chooseTextFileButton.DrawShadows = true;
 			this.chooseTextFileButton.HighEmphasis = true;
@@ -175,6 +179,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.textFileConvertToComboBox.AutoResize = false;
 			this.textFileConvertToComboBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+			this.tableLayoutPanel2.SetColumnSpan(this.textFileConvertToComboBox, 2);
 			this.textFileConvertToComboBox.Depth = 0;
 			this.textFileConvertToComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
 			this.textFileConvertToComboBox.DropDownHeight = 174;
@@ -196,6 +201,27 @@
 			this.textFileConvertToComboBox.TabIndex = 3;
 			this.textFileConvertToComboBox.UseAccent = false;
 			this.textFileConvertToComboBox.SelectedIndexChanged += new System.EventHandler(this.TextFileConvertToComboBox_SelectedIndexChanged);
+			// 
+			// convertTextFilesButton
+			// 
+			this.convertTextFilesButton.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.convertTextFilesButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.convertTextFilesButton.Depth = 0;
+			this.convertTextFilesButton.DrawShadows = true;
+			this.convertTextFilesButton.Enabled = false;
+			this.convertTextFilesButton.HighEmphasis = true;
+			this.convertTextFilesButton.Icon = null;
+			this.convertTextFilesButton.Location = new System.Drawing.Point(801, 138);
+			this.convertTextFilesButton.Margin = new System.Windows.Forms.Padding(4, 15, 4, 4);
+			this.convertTextFilesButton.MouseState = MaterialSkin.MouseState.HOVER;
+			this.convertTextFilesButton.Name = "convertTextFilesButton";
+			this.convertTextFilesButton.Size = new System.Drawing.Size(129, 36);
+			this.convertTextFilesButton.TabIndex = 4;
+			this.convertTextFilesButton.Text = "Convert files";
+			this.convertTextFilesButton.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+			this.convertTextFilesButton.UseAccentColor = false;
+			this.convertTextFilesButton.UseVisualStyleBackColor = true;
+			this.convertTextFilesButton.Click += new System.EventHandler(this.ConvertTextFileButton_Click);
 			// 
 			// tableLayoutPanel1
 			// 
@@ -284,41 +310,6 @@
 			this.tableLayoutPanel3.Size = new System.Drawing.Size(1154, 100);
 			this.tableLayoutPanel3.TabIndex = 9;
 			// 
-			// tableLayoutPanel4
-			// 
-			this.tableLayoutPanel4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.tableLayoutPanel4.ColumnCount = 1;
-			this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel4.Controls.Add(this.materialLabel1, 0, 0);
-			this.tableLayoutPanel4.Controls.Add(this.materialLabel3, 0, 1);
-			this.tableLayoutPanel4.Location = new System.Drawing.Point(58, 18);
-			this.tableLayoutPanel4.Name = "tableLayoutPanel4";
-			this.tableLayoutPanel4.RowCount = 2;
-			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 38.26087F));
-			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 61.73913F));
-			this.tableLayoutPanel4.Size = new System.Drawing.Size(1154, 93);
-			this.tableLayoutPanel4.TabIndex = 8;
-			// 
-			// drawerImageList
-			// 
-			this.drawerImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("drawerImageList.ImageStream")));
-			this.drawerImageList.TransparentColor = System.Drawing.Color.Transparent;
-			this.drawerImageList.Images.SetKeyName(0, "text_icon");
-			this.drawerImageList.Images.SetKeyName(1, "video_icon");
-			this.drawerImageList.Images.SetKeyName(2, "settings_icon");
-			// 
-			// textFileOpenDialog
-			// 
-			this.textFileOpenDialog.Filter = "Text file|*.txt|PDF file|*.pdf|Word files|*.docx";
-			this.textFileOpenDialog.Multiselect = true;
-			this.textFileOpenDialog.Title = "Choose a file";
-			this.textFileOpenDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.TextFileOpenDialog_FileOk);
-			// 
-			// textFileConversionBackgroundWorker
-			// 
-			this.textFileConversionBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.TextFileConversionBackgroundWorker_DoWork);
-			// 
 			// materialLabel5
 			// 
 			this.materialLabel5.Anchor = System.Windows.Forms.AnchorStyles.Left;
@@ -352,8 +343,8 @@
 			this.darkModeSwitch.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.darkModeSwitch.AutoSize = true;
 			this.darkModeSwitch.Depth = 0;
-			this.darkModeSwitch.Location = new System.Drawing.Point(617, 6);
-			this.darkModeSwitch.Margin = new System.Windows.Forms.Padding(0, 6, 4, 6);
+			this.darkModeSwitch.Location = new System.Drawing.Point(619, 6);
+			this.darkModeSwitch.Margin = new System.Windows.Forms.Padding(0);
 			this.darkModeSwitch.MouseLocation = new System.Drawing.Point(-1, -1);
 			this.darkModeSwitch.MouseState = MaterialSkin.MouseState.HOVER;
 			this.darkModeSwitch.Name = "darkModeSwitch";
@@ -362,35 +353,6 @@
 			this.darkModeSwitch.TabIndex = 1;
 			this.darkModeSwitch.UseVisualStyleBackColor = true;
 			this.darkModeSwitch.CheckedChanged += new System.EventHandler(this.DarkModeSwitch_CheckedChanged);
-			// 
-			// materialLabel3
-			// 
-			this.materialLabel3.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.materialLabel3.AutoSize = true;
-			this.materialLabel3.Depth = 0;
-			this.materialLabel3.Font = new System.Drawing.Font("Roboto Medium", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
-			this.materialLabel3.FontType = MaterialSkin.MaterialSkinManager.fontType.Subtitle2;
-			this.materialLabel3.Location = new System.Drawing.Point(467, 55);
-			this.materialLabel3.MouseState = MaterialSkin.MouseState.HOVER;
-			this.materialLabel3.Name = "materialLabel3";
-			this.materialLabel3.Size = new System.Drawing.Size(220, 17);
-			this.materialLabel3.TabIndex = 1;
-			this.materialLabel3.Text = "Change settings of the application";
-			// 
-			// materialLabel1
-			// 
-			this.materialLabel1.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.materialLabel1.AutoSize = true;
-			this.materialLabel1.Depth = 0;
-			this.materialLabel1.Font = new System.Drawing.Font("Roboto", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
-			this.materialLabel1.FontType = MaterialSkin.MaterialSkinManager.fontType.H5;
-			this.materialLabel1.Location = new System.Drawing.Point(533, 3);
-			this.materialLabel1.MouseState = MaterialSkin.MouseState.HOVER;
-			this.materialLabel1.Name = "materialLabel1";
-			this.materialLabel1.Size = new System.Drawing.Size(88, 29);
-			this.materialLabel1.TabIndex = 0;
-			this.materialLabel1.Text = "Settings";
-			this.materialLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// showLogsButton
 			// 
@@ -412,6 +374,70 @@
 			this.showLogsButton.UseVisualStyleBackColor = true;
 			this.showLogsButton.Click += new System.EventHandler(this.ShowLogsButton_Click);
 			// 
+			// tableLayoutPanel4
+			// 
+			this.tableLayoutPanel4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.tableLayoutPanel4.ColumnCount = 1;
+			this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel4.Controls.Add(this.materialLabel1, 0, 0);
+			this.tableLayoutPanel4.Controls.Add(this.materialLabel3, 0, 1);
+			this.tableLayoutPanel4.Location = new System.Drawing.Point(58, 18);
+			this.tableLayoutPanel4.Name = "tableLayoutPanel4";
+			this.tableLayoutPanel4.RowCount = 2;
+			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 38.26087F));
+			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 61.73913F));
+			this.tableLayoutPanel4.Size = new System.Drawing.Size(1154, 93);
+			this.tableLayoutPanel4.TabIndex = 8;
+			// 
+			// materialLabel1
+			// 
+			this.materialLabel1.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.materialLabel1.AutoSize = true;
+			this.materialLabel1.Depth = 0;
+			this.materialLabel1.Font = new System.Drawing.Font("Roboto", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
+			this.materialLabel1.FontType = MaterialSkin.MaterialSkinManager.fontType.H5;
+			this.materialLabel1.Location = new System.Drawing.Point(533, 3);
+			this.materialLabel1.MouseState = MaterialSkin.MouseState.HOVER;
+			this.materialLabel1.Name = "materialLabel1";
+			this.materialLabel1.Size = new System.Drawing.Size(88, 29);
+			this.materialLabel1.TabIndex = 0;
+			this.materialLabel1.Text = "Settings";
+			this.materialLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// materialLabel3
+			// 
+			this.materialLabel3.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.materialLabel3.AutoSize = true;
+			this.materialLabel3.Depth = 0;
+			this.materialLabel3.Font = new System.Drawing.Font("Roboto Medium", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
+			this.materialLabel3.FontType = MaterialSkin.MaterialSkinManager.fontType.Subtitle2;
+			this.materialLabel3.Location = new System.Drawing.Point(467, 55);
+			this.materialLabel3.MouseState = MaterialSkin.MouseState.HOVER;
+			this.materialLabel3.Name = "materialLabel3";
+			this.materialLabel3.Size = new System.Drawing.Size(220, 17);
+			this.materialLabel3.TabIndex = 1;
+			this.materialLabel3.Text = "Change settings of the application";
+			// 
+			// drawerImageList
+			// 
+			this.drawerImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("drawerImageList.ImageStream")));
+			this.drawerImageList.TransparentColor = System.Drawing.Color.Transparent;
+			this.drawerImageList.Images.SetKeyName(0, "text_icon");
+			this.drawerImageList.Images.SetKeyName(1, "video_icon");
+			this.drawerImageList.Images.SetKeyName(2, "settings_icon");
+			// 
+			// fileOpenDialog
+			// 
+			this.fileOpenDialog.Filter = "Text file|*.txt|PDF file|*.pdf|Word files|*.docx";
+			this.fileOpenDialog.Multiselect = true;
+			this.fileOpenDialog.Title = "Choose a file";
+			this.fileOpenDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.FileOpenDialog_FileOk);
+			// 
+			// textFileConversionBackgroundWorker
+			// 
+			this.textFileConversionBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.TextFileConversionBackgroundWorker_DoWork);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -425,6 +451,7 @@
 			this.MinimumSize = new System.Drawing.Size(1080, 680);
 			this.Name = "MainForm";
 			this.Text = "File Converter";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
 			this.Load += new System.EventHandler(this.MainForm_Load);
 			this.materialTabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
@@ -446,7 +473,7 @@
 		private System.Windows.Forms.TabPage tabPage1;
 		private System.Windows.Forms.TabPage tabPage2;
 		private System.Windows.Forms.ImageList drawerImageList;
-		private System.Windows.Forms.OpenFileDialog textFileOpenDialog;
+		private System.Windows.Forms.OpenFileDialog fileOpenDialog;
 		private MaterialSkin.Controls.MaterialLabel convertTextFilesTitleLabel;
 		private MaterialSkin.Controls.MaterialButton chooseTextFileButton;
 		private MaterialSkin.Controls.MaterialComboBox textFileConvertToComboBox;
@@ -466,6 +493,7 @@
 		private MaterialSkin.Controls.MaterialLabel materialLabel1;
 		private MaterialSkin.Controls.MaterialLabel materialLabel3;
 		private MaterialSkin.Controls.MaterialButton showLogsButton;
+		private MaterialSkin.Controls.MaterialButton textFileConversionCancelButton;
 	}
 }
 

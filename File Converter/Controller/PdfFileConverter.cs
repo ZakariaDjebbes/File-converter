@@ -10,48 +10,50 @@ namespace File_Converter.Controller
 {
 	public class PdfFileConverter : FileConverter
 	{
-		public override byte[] ConvertFile(Stream stream, string path)
+		public override void ConvertFile(Stream stream, string path)
 		{
 			OnFileStartConverting(path);
 			string ext = Path.GetExtension(path);
 			TextFileType current = TextFileType.Parse(ext);
-			MemoryStream resultStream = new MemoryStream();
+			string result = string.Empty;
 
 			if (current.Extension.Equals(TextFileType.Txt.Extension))
 			{
-				resultStream = TextToPdf(stream, path);
+				result = TextToPdf(stream, path);
 			}
 			else if (current.Extension.Equals(TextFileType.Word.Extension))
 			{
 				throw new NotImplementedException();
 			}
 
-			OnFileConverted(path);
-			return resultStream.ToArray();
+			OnFileConverted(path, result);
 		}
 
-		private MemoryStream TextToPdf(Stream stream, string path)
+		private string TextToPdf(Stream stream, string path)
 		{
-			MemoryStream resultStream = new MemoryStream();
-			StreamReader streamReader = new StreamReader(stream);
-			int lineCount = GetNumberOfLines(streamReader);
-			PdfWriter writer = new PdfWriter(resultStream);
-			PdfDocument pdf = new PdfDocument(writer);
-			Document document = new Document(pdf);
+			string tempPath = Path.GetTempFileName();
 
-			int lineNumber = 1;
-			while (!streamReader.EndOfStream)
+			using PdfWriter writer = new PdfWriter(tempPath);
+			using PdfDocument pdf = new PdfDocument(writer);
+			using Document document = new Document(pdf);
+
+			using (StreamReader streamReader = new StreamReader(stream))
 			{
-				string line = streamReader.ReadLine();
-				Paragraph paragraph = new Paragraph(line);
-				document.Add(paragraph);
-				int percent = lineNumber * 100 / lineCount;
-				OnFileConverting(path, percent, lineNumber);
-				lineNumber++;
+				int lineCount = GetNumberOfLines(streamReader);
+				int lineNumber = 1;
+
+				while (!streamReader.EndOfStream)
+				{
+					string line = streamReader.ReadLine();
+					Paragraph paragraph = new Paragraph(line);
+					document.Add(paragraph);
+					int percent = lineNumber * 100 / lineCount;
+					OnFileConverting(path, percent, lineNumber);
+					lineNumber++;
+				}
 			}
 
-			document.Close();
-			return resultStream;
+			return tempPath;
 		}
 	}
 }

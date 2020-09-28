@@ -46,7 +46,7 @@ namespace File_Converter.Model
 
 			foreach (var fileType in valuePairs.Values)
 			{
-				if (exclude.Contains(fileType.Extension))
+				if (exclude != null && exclude.Contains(fileType.Extension))
 				{
 					continue;
 				}

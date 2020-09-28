@@ -6,37 +6,34 @@ namespace File_Converter.Controller
 {
 	public class WordFileConverter : FileConverter
 	{
-		public override byte[] ConvertFile(Stream stream, string path)
+		public override void ConvertFile(Stream stream, string path)
 		{
 			OnFileStartConverting(path);
 
 			string ext = Path.GetExtension(path);
 			TextFileType current = TextFileType.Parse(ext);
-			MemoryStream resultStream = new MemoryStream();
+			string result = string.Empty;
 
 			if (current.Extension.Equals(TextFileType.Txt.Extension))
 			{
-				
+				result = TextToWord(stream, path);
 			}
-			else if (current.Extension.Equals(TextFileType.Pdf.Extension))
+			else if (current.Extension.Equals(TextFileType.Word.Extension))
 			{
 				throw new NotImplementedException();
 			}
 
-			resultStream.Seek(0, SeekOrigin.Begin);
-			OnFileConverted(path);
+			OnFileConverted(path, result);
 
-			return resultStream.ToArray();
+
+			//OnFileConverted(path);
 		}
 
-		private MemoryStream TexTtoWord(Stream stream, string path)
+		private string TextToWord(Stream stream, string path)
 		{
-			MemoryStream resultStream = new MemoryStream();
-			StreamWriter writer = new StreamWriter(resultStream);
+			string tempPath = Path.GetTempFileName();
 
-			
-
-			return resultStream;
+			return tempPath;
 		}
 	}
 }
