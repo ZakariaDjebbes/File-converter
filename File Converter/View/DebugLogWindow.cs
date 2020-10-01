@@ -1,11 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using File_Converter.Debug;
+using File_Converter.Logging;
+using MaterialSkin.Controls;
 
 namespace File_Converter.View
 {
-	public partial class DebugLogWindow : Form
+	public partial class DebugLogWindow : MaterialForm
 	{
 		public DebugLogWindow()
 		{
@@ -72,7 +73,11 @@ namespace File_Converter.View
 
 		private void saveButton_Click(object sender, EventArgs e)
 		{
-			string path = Path.Combine(Application.StartupPath, "logs.txt");
+			Directory.CreateDirectory(Path.Combine(Application.StartupPath, "logs"));
+
+			string path = Path.Combine(Application.StartupPath,
+				"logs",
+				$"{Path.GetRandomFileName().Substring(0, 2)}-logs-{DateTime.Now:hh_mm_ss_tt}.txt");
 
 			using (var tw = new StreamWriter(path))
 			{

@@ -1,15 +1,19 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using File_Converter.Model;
+using iText.IO.Source;
+using iText.Kernel.Font;
 using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
+using Syncfusion.Pdf.Graphics;
 
 namespace File_Converter.Controller
 {
 	public class TextFileConverter : FileConverter
 	{
-		public override void ConvertFile(Stream stream, string path)
+		public override void ConvertFile(string path)
 		{
 			OnFileStartConverting(path);
 
@@ -19,7 +23,7 @@ namespace File_Converter.Controller
 
 			if (current.Extension.Equals(TextFileType.Pdf.Extension))
 			{
-				result = PdfToText(stream, path);
+				result = PdfToText(path);
 			}
 			else if (current.Extension.Equals(TextFileType.Word.Extension))
 			{
@@ -29,34 +33,37 @@ namespace File_Converter.Controller
 			OnFileConverted(path, result);
 		}
 
-		private string PdfToText(Stream stream, string path)
+		private string PdfToText(string path)
 		{
-			string tempPath = Path.GetTempFileName();
+			string tempPath = GetTempPath();
 
-			using (stream)
+			using PdfReader reader = new PdfReader(path);
+			using PdfDocument pdf = new PdfDocument(reader);
+			
+			int numberOfPages = pdf.GetNumberOfPages();
+
+			using (StreamWriter writer = new StreamWriter(tempPath, false, Encoding.UTF8))
 			{
-				using PdfReader reader = new PdfReader(stream);
-				using PdfDocument pdf = new PdfDocument(reader);
-
-				int numberOfPages = pdf.GetNumberOfPages();
-
-				using (StreamWriter writer = new StreamWriter(tempPath))
+				for (int i = 1; i <= numberOfPages; i++)
 				{
-					for (int i = 1; i <= numberOfPages; i++)
-					{
-						FilteredEventListener listener = new FilteredEventListener();
-						LocationTextExtractionStrategy extractionStrategy =
-							listener.AttachEventListener(new LocationTextExtractionStrategy());
-						PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
-						parser.ProcessPageContent(pdf.GetPage(i));
+					FilteredEventListener listener = new FilteredEventListener();
+					LocationTextExtractionStrategy extractionStrategy =
+						listener.AttachEventListener(new LocationTextExtractionStrategy());
+					PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
+					PdfPage page = pdf.GetPage(i);
+					parser.ProcessPageContent(page);
 
-						writer.WriteLine(extractionStrategy.GetResultantText());
-						int percent = i * 100 / numberOfPages;
-						OnFileConverting(path, percent, i);
-					}
+					writer.WriteLine(extractionStrategy.GetResultantText());
+					int percent = i * 100 / numberOfPages;
+					OnFileConverting(path, percent, i);
 				}
 			}
 			return tempPath;
+		}
+
+		private string WordToText(string path)
+		{
+			return null;
 		}
 	}
 }

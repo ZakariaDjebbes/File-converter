@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using File_Converter.Debug;
 using File_Converter.Model;
 using iText.Kernel.Pdf;
 using iText.Layout;
@@ -10,7 +9,7 @@ namespace File_Converter.Controller
 {
 	public class PdfFileConverter : FileConverter
 	{
-		public override void ConvertFile(Stream stream, string path)
+		public override void ConvertFile(string path)
 		{
 			OnFileStartConverting(path);
 			string ext = Path.GetExtension(path);
@@ -19,7 +18,7 @@ namespace File_Converter.Controller
 
 			if (current.Extension.Equals(TextFileType.Txt.Extension))
 			{
-				result = TextToPdf(stream, path);
+				result = TextToPdf(path);
 			}
 			else if (current.Extension.Equals(TextFileType.Word.Extension))
 			{
@@ -29,15 +28,15 @@ namespace File_Converter.Controller
 			OnFileConverted(path, result);
 		}
 
-		private string TextToPdf(Stream stream, string path)
+		private string TextToPdf(string path)
 		{
-			string tempPath = Path.GetTempFileName();
+			string tempPath = GetTempPath();
 
 			using PdfWriter writer = new PdfWriter(tempPath);
 			using PdfDocument pdf = new PdfDocument(writer);
 			using Document document = new Document(pdf);
 
-			using (StreamReader streamReader = new StreamReader(stream))
+			using (StreamReader streamReader = new StreamReader(path))
 			{
 				int lineCount = GetNumberOfLines(streamReader);
 				int lineNumber = 1;
@@ -54,6 +53,11 @@ namespace File_Converter.Controller
 			}
 
 			return tempPath;
+		}
+
+		private string WordToPdf(string path)
+		{
+			return null;
 		}
 	}
 }

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using File_Converter.Controller;
-using File_Converter.Debug;
+using File_Converter.Logging;
+using File_Converter.Extensions;
 using File_Converter.Model;
 using File_Converter.View;
 using MaterialSkin;
@@ -41,6 +41,10 @@ namespace File_Converter
 				Color.FromArgb(95, 95, 196),
 				Color.FromArgb(140, 158, 255),
 				TextShade.WHITE);
+			DrawerHighlightWithAccent = true;
+			DrawerShowIconsWhenHidden = false;
+			DrawerBackgroundWithAccent = true;
+			DrawerUseColors = true;
 		}
 
 		private void MainForm_Load(object sender, EventArgs e)
@@ -64,7 +68,7 @@ namespace File_Converter
 			{
 				Logger.Instance.Enqueue(new Log($"Started saving {FileConverter.ConvertedFilesCount()} files to {saveFileDialog.FileName}",
 					LogStatus.STARTED));
-				FileConverter.SaveByteArrayToZip(saveFileDialog.FileName, currentTarget);
+				FileConverter.SaveConvertedFilesByteArraysToZip(saveFileDialog.FileName, currentTarget);
 			}
 		}
 
@@ -84,6 +88,37 @@ namespace File_Converter
 		private void FileOpenDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			filePaths = fileOpenDialog.FileNames;
+			FileConverter.ClearGeneratedFiles();
+			ClearTableLayoutPanel(textFilesConversionTableLayoutPanel);
+
+			double totalLenght = 0;
+			foreach (string path in filePaths)
+			{
+				long lenght = new FileInfo(path).Length;
+				if(lenght.ToMegabytes() > FileConverter.MAX_FILE_SIZE)
+				{
+					MessageBox.Show($"The size of the file at {path} exceeds {FileConverter.MAX_FILE_SIZE} MB",
+						"Selected file is too large",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Error);
+
+					Logger.Instance.Enqueue(new Log($"Size of selected file as {path} exceeds {FileConverter.MAX_FILE_SIZE} MB", LogStatus.ERROR));
+					return;
+				}
+				totalLenght += lenght.ToMegabytes();
+				Logger.Instance.Enqueue($"Size of selected file at {path} : {lenght.ToFileLengthRepresentation()}");
+			}
+
+			Logger.Instance.Enqueue($"Size of selected files ({filePaths.Length} file/s) : {Convert.ToInt64(totalLenght).ToFileLengthRepresentation()}");
+			if (totalLenght > FileConverter.TOTAL_MAX_FILE_SIZE)
+			{
+				MessageBox.Show($"The size of the selected files exceeds {FileConverter.TOTAL_MAX_FILE_SIZE} MB",
+					"Selected file is too large",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
+				Logger.Instance.Enqueue(new Log($"Size of selected files exceeds {FileConverter.TOTAL_MAX_FILE_SIZE} MB", LogStatus.ERROR));
+				return;
+			}
 
 			//empty previously generated progressbars & save buttons
 			generatedProgressBars = new Dictionary<string, MaterialProgressBar>();
@@ -104,7 +139,6 @@ namespace File_Converter
 			textFileConvertToComboBox.Enabled = true;
 
 			textFilesConversionTableLayoutPanel.SuspendLayout();
-			ClearTableLayoutPanel(textFilesConversionTableLayoutPanel);
 			//foreach fileName setup the table
 			foreach (string filePath in filePaths)
 			{
@@ -186,19 +220,29 @@ namespace File_Converter
 
 			if (saveFileDialog.ShowDialog() == DialogResult.OK)
 			{
+				string saveTo = saveFileDialog.FileName;
+
 				try
 				{
-					string saveTo = saveFileDialog.FileName;
 					Logger.Instance.Enqueue(new Log($"Started saving file {Path.GetFileName(filePath)} to {saveTo}",
 						LogStatus.STARTED));
-					FileConverter.SaveByteArrayToDisk(filePath, saveTo);
+					FileConverter.SaveConvertedFilesKeyValueToDisk(filePath, saveTo);
 				}
 				catch (FileNotFoundException exception)
 				{
-					Logger.Instance.Enqueue(new Log($"{exception.Message} | File with key {filePath} has not paired value in convertedFiles dictionary",
+					Logger.Instance.Enqueue(new Log($"{exception.Message} | File with key {filePath} has no paired value in convertedFiles dictionary",
 						LogStatus.ERROR));
 					MessageBox.Show($"Temporary file {exception.FileName} doesn't exist, please convert files again, if the error persists try cleaning your temporary files",
 						"File not found !",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Error);
+				}
+				catch (IOException exception)
+				{
+					Logger.Instance.Enqueue(new Log($"{exception.Message} | File with key {filePath} is used by another process",
+						LogStatus.ERROR));
+					MessageBox.Show($"File path selected at {saveTo} is used by another process, please make sure to close it before saving",
+						"Selected file used by another process",
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Error);
 				}
@@ -359,15 +403,8 @@ namespace File_Converter
 
 		private void ProcessTextFileConversion(object param)
 		{
-			Stream stream;
 			string filePath = param as string;
-			lock (fileOpenDialog)
-			{
-				fileOpenDialog.FileName = filePath;
-				stream = fileOpenDialog.OpenFile();
-			};
-
-			if (stream != null)
+			try
 			{
 				if (currentTarget.Extension.Equals(TextFileType.Pdf.Extension))
 				{
@@ -378,11 +415,19 @@ namespace File_Converter
 
 					Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] launched conversion of file [{filePath}]",
 						LogStatus.NONE, pdfFileConverter));
-					pdfFileConverter.ConvertFile(stream, filePath);
+					pdfFileConverter.ConvertFile(filePath);
 				}
 				else if (currentTarget.Extension.Equals(TextFileType.Word.Extension))
 				{
-					NotYetImplementedMessageBox();
+					WordFileConverter wordFileConverter = new WordFileConverter();
+					wordFileConverter.FileStartConverting += OnFileStartConverting;
+					wordFileConverter.FileConverting += OnFileConverting;
+					wordFileConverter.FileConverted += OnFileConverted;
+
+					Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] launched conversion of file [{filePath}]",
+						LogStatus.NONE, wordFileConverter));
+
+					wordFileConverter.ConvertFile(filePath);
 				}
 				else if (currentTarget.Extension.Equals(TextFileType.Txt.Extension))
 				{
@@ -393,19 +438,18 @@ namespace File_Converter
 
 					Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] started conversion of file [{filePath}]",
 						LogStatus.NONE, textFileConverter));
-					textFileConverter.ConvertFile(stream, filePath);
+					textFileConverter.ConvertFile(filePath);
 				}
 			}
-			else
+			catch (FileNotFoundException exception)
 			{
-				Logger.Instance.Enqueue(new Log($"Selected file at [{filePath}] was not found on disk",
+				Logger.Instance.Enqueue(new Log($"Selected file at [{exception.FileName}] was not found on disk",
 				LogStatus.ERROR));
 				MessageBox.Show($"The selected file was not found on disk, did you delete the file after selecting it?",
 				"An error has occured",
 				MessageBoxButtons.OK,
 				MessageBoxIcon.Error);
 			}
-
 			semaphore.Release();
 			return;
 		}
@@ -428,6 +472,7 @@ namespace File_Converter
 
 		private void ClearTableLayoutPanel(TableLayoutPanel table)
 		{
+			table.SuspendLayout();
 			if (table.Controls.Count > 0)
 			{
 				table.Controls.Clear();
@@ -442,7 +487,7 @@ namespace File_Converter
 						item[i].Dispose();
 				}
 			}
-
+			table.ResumeLayout();
 			Logger.Instance.Enqueue($"Table layout panel {table.Name} cleared | number of rows {table.RowCount} | number of columns {table.ColumnCount} | number of controls {table.Controls.Count}");
 		}
 	}

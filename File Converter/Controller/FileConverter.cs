@@ -1,8 +1,10 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using File_Converter.Debug;
+using System.Windows.Forms;
+using File_Converter.Logging;
 using File_Converter.Model;
 
 namespace File_Converter.Controller
@@ -25,6 +27,9 @@ namespace File_Converter.Controller
 
 	public abstract class FileConverter
 	{
+		public const double MAX_FILE_SIZE = 20f;
+		public const double TOTAL_MAX_FILE_SIZE = 200f;
+
 		protected static Dictionary<string, string> convertedFiles = new Dictionary<string, string>();
 
 		public EventHandler<ConvertionArgs> FileStartConverting;
@@ -33,7 +38,7 @@ namespace File_Converter.Controller
 
 		public static int ConvertedFilesCount() => convertedFiles.Count;
 
-		public static byte[] GetByteArrayOfTempFile(string tempPath)
+		public static byte[] GetConvertedFileByteArrayOfTempFile(string tempPath)
 		{
 			if(!convertedFiles.ContainsValue(tempPath))
 			{
@@ -43,7 +48,7 @@ namespace File_Converter.Controller
 			return File.ReadAllBytes(tempPath);
 		}
 
-		public static byte[] GetByteArrayOfPath(string path)
+		public static byte[] GetConvertedFileByteArrayOfPath(string path)
 		{
 			if (!convertedFiles.ContainsKey(path))
 			{
@@ -53,7 +58,7 @@ namespace File_Converter.Controller
 			return File.ReadAllBytes(convertedFiles[path]);
 		}
 
-		private static void DeleteTmpFile(string tempFile)
+		private static void DeleteTmpFileFromConvertedFiles(string tempFile)
 		{
 			try
 			{
@@ -67,8 +72,19 @@ namespace File_Converter.Controller
 				Logger.Instance.Enqueue(new Log($"Could not delete file at {tempFile}, {ex.Message}", LogStatus.ERROR));
 			}
 		}
+		
+		public static string GetTempPath()
+		{
+			const string TEMP_SUB_FOLDER_NAME = "temp";
+			string tempSubDirectory = Path.Combine(Application.StartupPath, TEMP_SUB_FOLDER_NAME);
+			Directory.CreateDirectory(tempSubDirectory);
 
-		public abstract void ConvertFile(Stream stream, string path);
+			string tempPath = Path.Combine(tempSubDirectory, Path.GetRandomFileName());
+
+			return tempPath;
+		}
+
+		public abstract void ConvertFile(string path);
 
 		protected virtual void OnFileStartConverting(string path)
 			=> FileStartConverting?.Invoke(this, new ConvertionArgs() { Path = path });
@@ -86,7 +102,7 @@ namespace File_Converter.Controller
 			if(convertedFiles.ContainsKey(path))
 			{
 				string oldTempPath = convertedFiles[path];
-				DeleteTmpFile(oldTempPath);
+				DeleteTmpFileFromConvertedFiles(oldTempPath);
 				convertedFiles.Remove(path);
 			}
 
@@ -104,7 +120,7 @@ namespace File_Converter.Controller
 			foreach (var item in convertedFiles)
 			{
 				string tempPath = item.Value;
-				DeleteTmpFile(tempPath);
+				DeleteTmpFileFromConvertedFiles(tempPath);
 			}
 
 			convertedFiles.Clear();
@@ -128,13 +144,18 @@ namespace File_Converter.Controller
 			return lineCount;
 		}
 
-		public static void SaveByteArrayToDisk(string path, string saveTo)
+		public static void SaveConvertedFilesKeyValueToDisk(string path, string saveTo)
 		{
-			File.WriteAllBytes(saveTo, GetByteArrayOfPath(path));
+			File.WriteAllBytes(saveTo, GetConvertedFileByteArrayOfPath(path));	
 			Logger.Instance.Enqueue(new Log($"file saved at [{path}]", LogStatus.SAVED));
 		}
 
-		public static void SaveByteArrayToZip(string path, FileType fileType)
+		public static void SaveByteArrayToDisk(string path, byte[] bytes)
+		{
+			File.WriteAllBytes(path, bytes);
+		}
+
+		public static void SaveConvertedFilesByteArraysToZip(string path, FileType fileType)
 		{
 			using (var fileStream = new FileStream(path, FileMode.Create))
 			{
@@ -142,12 +163,13 @@ namespace File_Converter.Controller
 				{
 					foreach (var item in convertedFiles)
 					{
-						var bytes = GetByteArrayOfTempFile(item.Value);
+						var bytes = GetConvertedFileByteArrayOfTempFile(item.Value);
 						var fileName = Path.GetFileNameWithoutExtension(item.Key) + fileType.Extension;
 						var zipArchiveEntry = archive.CreateEntry(fileName, CompressionLevel.Fastest);
 						using (var zipStream = zipArchiveEntry.Open())
+						{
 							zipStream.Write(bytes, 0, bytes.Length);
-
+						}
 						Logger.Instance.Enqueue(new Log($"file [{fileName}] saved in zip file at [{path}]", LogStatus.SAVED));
 					}
 				}
