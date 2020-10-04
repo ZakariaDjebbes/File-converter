@@ -2,19 +2,22 @@
 using System.IO;
 using System.Windows.Forms;
 using File_Converter.Logging;
+using MaterialSkin;
 using MaterialSkin.Controls;
 
 namespace File_Converter.View
 {
 	public partial class DebugLogWindow : MaterialForm
 	{
+		private readonly Logger logger = Logger.Instance;
+
 		public DebugLogWindow()
 		{
 			InitializeComponent();
-
-			Logger.Instance.StartLogging += OnStartLogging;
-			Logger.Instance.Logging += OnLogging;
-			Logger.Instance.EndLogging += OnEndLogging;
+			logger.Enqueue($"Theme {MaterialSkinManager.Instance.Theme}");
+			logger.StartLogging += OnStartLogging;
+			logger.Logging += OnLogging;
+			logger.EndLogging += OnEndLogging;
 		}
 
 		private void OnStartLogging(object sender, EventArgs e)
@@ -49,10 +52,11 @@ namespace File_Converter.View
 			{
 				e.Cancel = true;
 				Hide();
+				SaveLogsToDisk();
 			}
 		}
 
-		private void refreshButton_Click(object sender, System.EventArgs e)
+		private void RefreshButton_Click(object sender, System.EventArgs e)
 		{
 			if (backgroundWorker.IsBusy)
 			{
@@ -66,18 +70,18 @@ namespace File_Converter.View
 			}
 		}
 
-		private void backgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+		private void BackgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
 		{
-			Logger.Instance.PrintToListView(logsListView);
+			logger.PrintToListView(logsListView);
 		}
 
-		private void saveButton_Click(object sender, EventArgs e)
+		private void SaveLogsToDisk()
 		{
 			Directory.CreateDirectory(Path.Combine(Application.StartupPath, "logs"));
 
 			string path = Path.Combine(Application.StartupPath,
 				"logs",
-				$"{Path.GetRandomFileName().Substring(0, 2)}-logs-{DateTime.Now:hh_mm_ss_tt}.txt");
+				$"LOGS_{DateTime.Now:hh_mm_ss_tt}.txt");
 
 			using (var tw = new StreamWriter(path))
 			{
@@ -86,8 +90,6 @@ namespace File_Converter.View
 					tw.WriteLine(item.Text);
 				}
 			}
-
-			MessageBox.Show($"Logs saved to {path}", "Logs saved", MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 	}
 }

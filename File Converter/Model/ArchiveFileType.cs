@@ -55,6 +55,23 @@ namespace File_Converter.Model
 			return archiveFiles;
 		}
 
+		public static List<FileType> AsGenericList(List<string> exclude = null)
+		{
+			List<FileType> textFiles = new List<FileType>();
+
+			foreach (var fileType in valuePairs.Values)
+			{
+				if (exclude != null && exclude.Contains(fileType.Extension))
+				{
+					continue;
+				}
+
+				textFiles.Add(fileType);
+			}
+
+			return textFiles;
+		}
+
 		public static bool Exists(string extension)
 		{
 			return valuePairs.ContainsKey(extension);

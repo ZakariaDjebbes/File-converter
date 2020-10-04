@@ -155,6 +155,7 @@
 			this.materialLabel8.TabIndex = 7;
 			this.materialLabel8.Text = "Total size limit : 200MB";
 			this.materialLabel8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.materialLabel8.Visible = false;
 			// 
 			// textFileConversionCancelButton
 			// 
@@ -246,7 +247,7 @@
 			this.convertTextFilesButton.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
 			this.convertTextFilesButton.UseAccentColor = false;
 			this.convertTextFilesButton.UseVisualStyleBackColor = true;
-			this.convertTextFilesButton.Click += new System.EventHandler(this.ConvertTextFileButton_Click);
+			this.convertTextFilesButton.Click += new System.EventHandler(this.ConvertTextFilesButton_Click);
 			// 
 			// materialLabel7
 			// 
@@ -262,6 +263,7 @@
 			this.materialLabel7.TabIndex = 6;
 			this.materialLabel7.Text = "Size limit per file : 20MB";
 			this.materialLabel7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.materialLabel7.Visible = false;
 			// 
 			// tableLayoutPanel1
 			// 

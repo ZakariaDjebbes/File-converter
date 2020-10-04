@@ -1,8 +1,7 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using File_Converter.Model;
-using Syncfusion.DocIO;
-using Syncfusion.DocIO.DLS;
+using SautinSoft;
+using Word = Microsoft.Office.Interop.Word;
 
 namespace File_Converter.Controller
 {
@@ -22,9 +21,9 @@ namespace File_Converter.Controller
 			{
 				result = TextToWord(path);
 			}
-			else if (current.Extension.Equals(TextFileType.Word.Extension))
+			else if (current.Extension.Equals(TextFileType.Pdf.Extension))
 			{
-				throw new NotImplementedException();
+				result = PdfToWord(path);
 			}
 
 			OnFileConverted(path, result);
@@ -34,40 +33,52 @@ namespace File_Converter.Controller
 		{
 			string tempPath = GetTempPath();
 
-			using (WordDocument document = new WordDocument())
+			Word.Application app = new Word.Application();
+			Word.Document document = app.Documents.Add();
+
+			object start = 0;
+			object end = 0;
+
+			using (StreamReader streamReader = new StreamReader(path))
 			{
-				using (StreamReader streamReader = new StreamReader(path))
+				int lineCount = GetNumberOfLines(streamReader);
+				int lineNumber = 1;
+
+				while (!streamReader.EndOfStream)
 				{
-					int lineCount = GetNumberOfLines(streamReader);
-					int lineNumber = 1;
-					IWSection section = document.AddSection();
-					IWParagraph paragraph = section.AddParagraph();
-					int pItemsCap = 500;
-
-					while (!streamReader.EndOfStream)
-					{
-						if (paragraph.Items.Count > pItemsCap)
-						{
-							paragraph = section.AddParagraph();
-						}
-
-						string line = streamReader.ReadLine();
-						paragraph.AppendText(line);
-						paragraph.AppendBreak(BreakType.LineBreak);
-						int percent = lineNumber * 100 / lineCount;
-						OnFileConverting(path, percent, lineNumber);
-						lineNumber++;
-					}
+					string line = streamReader.ReadLine();
+					Word.Range rng = document.Range(ref start, ref end);
+					rng.Text += line + "\n";
+					int percent = lineNumber * 100 / lineCount;
+					OnFileConverting(path, percent);
+					lineNumber++;
 				}
-
-				document.Save(tempPath, FormatType.Docx);
 			}
+
+			document.SaveAs2(tempPath);
+			document.Close();
+			app.Quit();
+
 			return tempPath;
 		}
 
-		private string PdfToWord(Stream stream, string path)
+		private string PdfToWord(string path)
 		{
-			return null;
+			string tempPath = GetTempPath();
+			PdfFocus pdf = new PdfFocus();
+			pdf.OpenPdf(path);
+
+			if(pdf.PageCount > 0)
+			{
+				pdf.WordOptions.Format = PdfFocus.CWordOptions.eWordDocument.Docx;
+				pdf.NotifyPageProgress += (current, total) => {
+					int percent = current * 100 / total;
+					OnFileConverting(path, percent);
+				};
+				pdf.ToWord(tempPath);
+			}
+
+			return tempPath;
 		}
 	}
 }

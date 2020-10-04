@@ -83,11 +83,11 @@
 			this.refreshButton.TabIndex = 1;
 			this.refreshButton.Text = "Show / Refresh";
 			this.refreshButton.UseVisualStyleBackColor = true;
-			this.refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
+			this.refreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
 			// 
 			// backgroundWorker
 			// 
-			this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
+			this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker_DoWork);
 			// 
 			// refreshBar
 			// 
@@ -109,7 +109,6 @@
 			this.saveButton.TabIndex = 3;
 			this.saveButton.Text = "Save logs";
 			this.saveButton.UseVisualStyleBackColor = true;
-			this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
 			// 
 			// panel1
 			// 

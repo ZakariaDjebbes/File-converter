@@ -12,7 +12,8 @@
 		NONE = 7,
 		NOT_IMPLEMENTED = 8,
 		BUSY = 9,
-		SAVED = 10
+		SAVED = 10,
+		TEST = 11
 	}
 
 	internal class Log

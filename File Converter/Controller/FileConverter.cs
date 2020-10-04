@@ -1,5 +1,4 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -27,20 +26,63 @@ namespace File_Converter.Controller
 
 	public abstract class FileConverter
 	{
-		public const double MAX_FILE_SIZE = 20f;
-		public const double TOTAL_MAX_FILE_SIZE = 200f;
+		//public const double MAX_FILE_SIZE = 20f;
+		//public const double TOTAL_MAX_FILE_SIZE = 200f;
 
-		protected static Dictionary<string, string> convertedFiles = new Dictionary<string, string>();
+		private static Dictionary<string, string> convertedFiles = new Dictionary<string, string>();
 
 		public EventHandler<ConvertionArgs> FileStartConverting;
 		public EventHandler<ConvertingArgs> FileConverting;
 		public EventHandler<ConvertedArgs> FileConverted;
 
+		public abstract void ConvertFile(string path);
+
+		protected virtual void OnFileStartConverting(string path)
+		{
+			FileStartConverting?.Invoke(this, new ConvertionArgs() { Path = path });
+		}
+
+		protected virtual void OnFileConverting(string path, int percent)
+			=> FileConverting?.Invoke(this, new ConvertingArgs()
+			{
+				Path = path,
+				ConversionPercent = percent,
+			});
+
+		protected virtual void OnFileConverted(string path, string tempPath)
+		{
+			if (convertedFiles.ContainsKey(path))
+			{
+				string oldTempPath = convertedFiles[path];
+				DeleteTmpFileFromConvertedFiles(oldTempPath);
+				convertedFiles.Remove(path);
+			}
+
+			convertedFiles.Add(path, tempPath);
+
+			FileConverted?.Invoke(this, new ConvertedArgs()
+			{
+				Path = path,
+				TempPath = tempPath
+			});
+		}
+
+		public static string GetTempPath()
+		{
+			const string TEMP_SUB_FOLDER_NAME = "temp";
+			string tempSubDirectory = Path.Combine(Application.StartupPath, TEMP_SUB_FOLDER_NAME);
+			Directory.CreateDirectory(tempSubDirectory);
+
+			string tempPath = Path.Combine(tempSubDirectory, Path.GetRandomFileName());
+
+			return tempPath;
+		}
+
 		public static int ConvertedFilesCount() => convertedFiles.Count;
 
 		public static byte[] GetConvertedFileByteArrayOfTempFile(string tempPath)
 		{
-			if(!convertedFiles.ContainsValue(tempPath))
+			if (!convertedFiles.ContainsValue(tempPath))
 			{
 				throw new FileNotFoundException($"Temporary file at {tempPath} does not exist.");
 			}
@@ -72,48 +114,6 @@ namespace File_Converter.Controller
 				Logger.Instance.Enqueue(new Log($"Could not delete file at {tempFile}, {ex.Message}", LogStatus.ERROR));
 			}
 		}
-		
-		public static string GetTempPath()
-		{
-			const string TEMP_SUB_FOLDER_NAME = "temp";
-			string tempSubDirectory = Path.Combine(Application.StartupPath, TEMP_SUB_FOLDER_NAME);
-			Directory.CreateDirectory(tempSubDirectory);
-
-			string tempPath = Path.Combine(tempSubDirectory, Path.GetRandomFileName());
-
-			return tempPath;
-		}
-
-		public abstract void ConvertFile(string path);
-
-		protected virtual void OnFileStartConverting(string path)
-			=> FileStartConverting?.Invoke(this, new ConvertionArgs() { Path = path });
-
-		protected virtual void OnFileConverting(string path, int percent, int line)
-			=> FileConverting?.Invoke(this, new ConvertingArgs()
-			{
-				Path = path,
-				ConversionPercent = percent,
-				CurrentLine = line
-			});
-
-		protected virtual void OnFileConverted(string path, string tempPath)
-		{
-			if(convertedFiles.ContainsKey(path))
-			{
-				string oldTempPath = convertedFiles[path];
-				DeleteTmpFileFromConvertedFiles(oldTempPath);
-				convertedFiles.Remove(path);
-			}
-
-			convertedFiles.Add(path, tempPath);
-
-			FileConverted?.Invoke(this, new ConvertedArgs()
-			{
-				Path = path,
-				TempPath = tempPath
-			});
-		}
 
 		public static void ClearGeneratedFiles()
 		{
@@ -125,7 +125,6 @@ namespace File_Converter.Controller
 
 			convertedFiles.Clear();
 		}
-
 		protected static int GetNumberOfLines(StreamReader streamReader, bool reset = true)
 		{
 			int lineCount = 0;
@@ -146,13 +145,8 @@ namespace File_Converter.Controller
 
 		public static void SaveConvertedFilesKeyValueToDisk(string path, string saveTo)
 		{
-			File.WriteAllBytes(saveTo, GetConvertedFileByteArrayOfPath(path));	
+			File.WriteAllBytes(saveTo, GetConvertedFileByteArrayOfPath(path));
 			Logger.Instance.Enqueue(new Log($"file saved at [{path}]", LogStatus.SAVED));
-		}
-
-		public static void SaveByteArrayToDisk(string path, byte[] bytes)
-		{
-			File.WriteAllBytes(path, bytes);
 		}
 
 		public static void SaveConvertedFilesByteArraysToZip(string path, FileType fileType)

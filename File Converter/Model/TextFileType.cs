@@ -11,14 +11,16 @@ namespace File_Converter.Model
 		public static readonly TextFileType Txt = new TextFileType("Text file (*.txt)", ".txt");
 		public static readonly TextFileType Pdf = new TextFileType("Portable Document Format (*.pdf)", ".pdf");
 		public static readonly TextFileType Word = new TextFileType("Word file (*.docx)", ".docx");
-
+		//public static readonly TextFileType Html = new TextFileType("Hypertext Markup Language (*.html)", ".html");
+		
 		static TextFileType()
 		{
 			valuePairs = new Dictionary<string, TextFileType>
 			{
 				{ Txt.Extension, Txt },
 				{ Pdf.Extension, Pdf },
-				{ Word.Extension, Word }
+				{ Word.Extension, Word },
+				//{ Html.Extension, Html}
 			};
 		}
 
@@ -56,6 +58,24 @@ namespace File_Converter.Model
 
 			return textFiles;
 		}
+
+		public static List<FileType> AsGenericList(List<string> exclude = null)
+		{
+			List<FileType> textFiles = new List<FileType>();
+
+			foreach (var fileType in valuePairs.Values)
+			{
+				if (exclude != null && exclude.Contains(fileType.Extension))
+				{
+					continue;
+				}
+
+				textFiles.Add(fileType);
+			}
+
+			return textFiles;
+		}
+
 
 		public static bool Exists(string extension)
 		{

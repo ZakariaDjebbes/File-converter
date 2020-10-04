@@ -12,13 +12,19 @@
 
 			if (fileLength >= 1 << 10)
 				return $"{fileLength >> 10}KB";
-			
+
 			return $"{fileLength}B";
 		}
 
 		public static double ToMegabytes(this long fileLength)
 		{
 			return fileLength / 1024f / 1024f;
+		}
+
+		public static string GetLine(this string text, int line)
+		{
+			string[] lines = text.Replace("\r", "").Split('\n');
+			return lines.Length >= line ? lines[line - 1] : null;
 		}
 	}
 }

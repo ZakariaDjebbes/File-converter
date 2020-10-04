@@ -6,7 +6,6 @@ using System.Threading;
 using System.Windows.Forms;
 using File_Converter.Controller;
 using File_Converter.Logging;
-using File_Converter.Extensions;
 using File_Converter.Model;
 using File_Converter.View;
 using MaterialSkin;
@@ -42,11 +41,11 @@ namespace File_Converter
 				Color.FromArgb(140, 158, 255),
 				TextShade.WHITE);
 			DrawerHighlightWithAccent = true;
-			DrawerShowIconsWhenHidden = false;
 			DrawerBackgroundWithAccent = true;
 			DrawerUseColors = true;
 		}
 
+		#region TEXT FILE CONVERSION
 		private void MainForm_Load(object sender, EventArgs e)
 		{
 			convertTextFilesButton.Enabled = false;
@@ -59,30 +58,10 @@ namespace File_Converter
 			FileConverter.ClearGeneratedFiles();
 		}
 
-		private void SaveAllButton_Click(object sender, EventArgs e)
+		private void ChooseTextFileButton_Click(object sender, EventArgs e)
 		{
-			saveFileDialog.Filter = FileType.GetFilter(ArchiveFileType.Zip);
-			saveFileDialog.FileName = "Converted files";
-
-			if (saveFileDialog.ShowDialog() == DialogResult.OK)
-			{
-				Logger.Instance.Enqueue(new Log($"Started saving {FileConverter.ConvertedFilesCount()} files to {saveFileDialog.FileName}",
-					LogStatus.STARTED));
-				FileConverter.SaveConvertedFilesByteArraysToZip(saveFileDialog.FileName, currentTarget);
-			}
-		}
-
-		private void ShowLogsButton_Click(object sender, EventArgs e)
-		{
-			if (logWindow == null)
-			{
-				logWindow = new DebugLogWindow();
-				logWindow.Show();
-			}
-			else
-			{
-				logWindow.Show();
-			}
+			SetFileDialogFilters(typeof(TextFileType), fileOpenDialog);
+			fileOpenDialog.ShowDialog();
 		}
 
 		private void FileOpenDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
@@ -91,34 +70,35 @@ namespace File_Converter
 			FileConverter.ClearGeneratedFiles();
 			ClearTableLayoutPanel(textFilesConversionTableLayoutPanel);
 
-			double totalLenght = 0;
-			foreach (string path in filePaths)
-			{
-				long lenght = new FileInfo(path).Length;
-				if(lenght.ToMegabytes() > FileConverter.MAX_FILE_SIZE)
-				{
-					MessageBox.Show($"The size of the file at {path} exceeds {FileConverter.MAX_FILE_SIZE} MB",
-						"Selected file is too large",
-						MessageBoxButtons.OK,
-						MessageBoxIcon.Error);
+			//TODO Handle file sizes !
+			//double totalLenght = 0;
+			//foreach (string path in filePaths)
+			//{
+			//	long lenght = new FileInfo(path).Length;
+			//	if(lenght.ToMegabytes() > FileConverter.MAX_FILE_SIZE)
+			//	{
+			//		MessageBox.Show($"The size of the file at {path} exceeds {FileConverter.MAX_FILE_SIZE} MB",
+			//			"Selected file is too large",
+			//			MessageBoxButtons.OK,
+			//			MessageBoxIcon.Error);
 
-					Logger.Instance.Enqueue(new Log($"Size of selected file as {path} exceeds {FileConverter.MAX_FILE_SIZE} MB", LogStatus.ERROR));
-					return;
-				}
-				totalLenght += lenght.ToMegabytes();
-				Logger.Instance.Enqueue($"Size of selected file at {path} : {lenght.ToFileLengthRepresentation()}");
-			}
+			//		Logger.Instance.Enqueue(new Log($"Size of selected file as {path} exceeds {FileConverter.MAX_FILE_SIZE} MB", LogStatus.ERROR));
+			//		return;
+			//	}
+			//	totalLenght += lenght.ToMegabytes();
+			//	Logger.Instance.Enqueue($"Size of selected file at {path} : {lenght.ToFileLengthRepresentation()}");
+			//}
 
-			Logger.Instance.Enqueue($"Size of selected files ({filePaths.Length} file/s) : {Convert.ToInt64(totalLenght).ToFileLengthRepresentation()}");
-			if (totalLenght > FileConverter.TOTAL_MAX_FILE_SIZE)
-			{
-				MessageBox.Show($"The size of the selected files exceeds {FileConverter.TOTAL_MAX_FILE_SIZE} MB",
-					"Selected file is too large",
-					MessageBoxButtons.OK,
-					MessageBoxIcon.Error);
-				Logger.Instance.Enqueue(new Log($"Size of selected files exceeds {FileConverter.TOTAL_MAX_FILE_SIZE} MB", LogStatus.ERROR));
-				return;
-			}
+			//Logger.Instance.Enqueue($"Size of selected files ({filePaths.Length} file/s) : {Convert.ToInt64(totalLenght).ToFileLengthRepresentation()}");
+			//if (totalLenght > FileConverter.TOTAL_MAX_FILE_SIZE)
+			//{
+			//	MessageBox.Show($"The size of the selected files exceeds {FileConverter.TOTAL_MAX_FILE_SIZE} MB",
+			//		"Selected file is too large",
+			//		MessageBoxButtons.OK,
+			//		MessageBoxIcon.Error);
+			//	Logger.Instance.Enqueue(new Log($"Size of selected files exceeds {FileConverter.TOTAL_MAX_FILE_SIZE} MB", LogStatus.ERROR));
+			//	return;
+			//}
 
 			//empty previously generated progressbars & save buttons
 			generatedProgressBars = new Dictionary<string, MaterialProgressBar>();
@@ -165,7 +145,8 @@ namespace File_Converter
 					Value = 0,
 					Minimum = 0,
 					Maximum = 100,
-					Step = 1
+					Step = 1,
+					Style = ProgressBarStyle.Continuous
 				};
 
 				textFilesConversionTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
@@ -213,78 +194,35 @@ namespace File_Converter
 			convertTextFilesButton.Enabled = true;
 		}
 
-		private void SaveFileButton_Click(object sender, EventArgs e, string filePath)
-		{
-			saveFileDialog.Filter = currentTarget.GetFilter();
-			saveFileDialog.FileName = Path.GetFileNameWithoutExtension(filePath);
-
-			if (saveFileDialog.ShowDialog() == DialogResult.OK)
-			{
-				string saveTo = saveFileDialog.FileName;
-
-				try
-				{
-					Logger.Instance.Enqueue(new Log($"Started saving file {Path.GetFileName(filePath)} to {saveTo}",
-						LogStatus.STARTED));
-					FileConverter.SaveConvertedFilesKeyValueToDisk(filePath, saveTo);
-				}
-				catch (FileNotFoundException exception)
-				{
-					Logger.Instance.Enqueue(new Log($"{exception.Message} | File with key {filePath} has no paired value in convertedFiles dictionary",
-						LogStatus.ERROR));
-					MessageBox.Show($"Temporary file {exception.FileName} doesn't exist, please convert files again, if the error persists try cleaning your temporary files",
-						"File not found !",
-						MessageBoxButtons.OK,
-						MessageBoxIcon.Error);
-				}
-				catch (IOException exception)
-				{
-					Logger.Instance.Enqueue(new Log($"{exception.Message} | File with key {filePath} is used by another process",
-						LogStatus.ERROR));
-					MessageBox.Show($"File path selected at {saveTo} is used by another process, please make sure to close it before saving",
-						"Selected file used by another process",
-						MessageBoxButtons.OK,
-						MessageBoxIcon.Error);
-				}
-			}
-		}
-
-		private void ChooseTextFileButton_Click(object sender, System.EventArgs e)
-		{
-			List<TextFileType> textFileTypes = TextFileType.AsList();
-
-			bool first = true;
-
-			foreach (TextFileType textFileType in textFileTypes)
-			{
-				if (first)
-				{
-					fileOpenDialog.Filter = textFileType.GetFilter();
-					first = false;
-				}
-				else
-				{
-					fileOpenDialog.Filter += "|" + textFileType.GetFilter();
-				}
-			}
-
-			fileOpenDialog.ShowDialog();
-		}
-
 		private void TextFileConvertToComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			convertTextFilesButton.Enabled = true;
 		}
 
-		private void ConvertTextFileButton_Click(object sender, EventArgs e)
+		private void ConvertTextFilesButton_Click(object sender, EventArgs e)
 		{
 			string convertToExtension = textFileConvertToComboBox.SelectedValue as string;
 
 			currentTarget = TextFileType.Parse(convertToExtension);
+			TextFileType currentFileType = TextFileType.Parse(Path.GetExtension(filePaths[0]));
 
 			//start background worker
 			if (!textFileConversionBackgroundWorker.IsBusy)
 			{
+				if ((currentTarget.Extension.Equals(TextFileType.Word.Extension) 
+					|| currentFileType.Extension.Equals(TextFileType.Word.Extension))
+					&& !CheckMicrosoftWordExists())
+				{
+					Logger.Instance.Enqueue(new Log($"Microsoft word isn't intalled. Cannot convert file from or to {TextFileType.Word.GetFilter()} format.",
+					LogStatus.ERROR));
+					MessageBox.Show($"You cannot use this feature because Microsoft Word is not installed on your computer",
+						"Microsoft word isn't installed",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Information);
+
+					return;
+				}
+
 				convertTextFilesButton.Enabled = false;
 				textFileConversionBackgroundWorker.RunWorkerAsync();
 			}
@@ -299,66 +237,6 @@ namespace File_Converter
 			}
 		}
 
-		private void TextFileConversionCancelButton_Click(object sender, EventArgs e)
-		{
-			ClearTextFileConversionTab();
-		}
-
-		private void ClearTextFileConversionTab()
-		{
-			if (generatedSaveButtons.Count == 0)
-			{
-				MessageBox.Show($"Nothing to clear or cancel for now", "Nothing to clear for the moment", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				return;
-			}
-
-			FileConverter.ClearGeneratedFiles();
-
-			SuspendLayout();
-			ClearTableLayoutPanel(textFilesConversionTableLayoutPanel);
-
-			generatedProgressBars.Clear();
-			generatedSaveButtons.Clear();
-			generatedControls.Clear();
-			filePaths = null;
-
-			convertTextFilesButton.Enabled = false;
-			saveAllButton.Visible = false;
-			ResumeLayout();
-		}
-
-		private void OnFileStartConverting(object sender, ConvertionArgs e)
-		{
-			Logger.Instance.Enqueue(new Log($"Thread effectivly [{Thread.CurrentThread.ManagedThreadId}] started converting file to {currentTarget.Extension}",
-					LogStatus.STARTED));
-		}
-
-		private void OnFileConverting(object sender, ConvertingArgs e)
-		{
-			MaterialProgressBar bar = generatedProgressBars[e.Path];
-
-			bar.Invoke((Action)(() =>
-			{
-				bar.Value = e.ConversionPercent;
-			}));
-
-			//Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] converting > {nameof(e.CurrentLine)} : {e.CurrentLine} | {nameof(e.ConversionPercent)} : {e.ConversionPercent}",
-			//		Log_Status.ONGOING));
-		}
-
-		private void OnFileConverted(object sender, ConvertionArgs e)
-		{
-			MaterialButton saveButton = generatedSaveButtons[e.Path];
-
-			saveButton.Invoke((Action)(() =>
-			{
-				saveButton.Enabled = true;
-			}));
-
-			Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] finished converting file to {currentTarget.Extension}",
-					LogStatus.DONE));
-		}
-
 		private void TextFileConversionBackgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
 		{
 			Logger.Instance.Enqueue(new Log($"Text conversion background worker [{Thread.CurrentThread.ManagedThreadId}] started > {nameof(filePaths)} : {filePaths.Length} files to convert",
@@ -367,24 +245,10 @@ namespace File_Converter
 			if ((generatedProgressBars.Count == generatedSaveButtons.Count) &&
 				(generatedSaveButtons.Count == filePaths.Length))
 			{
-				semaphore = new SemaphoreSlim(0);
-
-				foreach (string path in filePaths)
+				if (CheckFiles(convertTextFilesButton))
 				{
-					Logger.Instance.Enqueue(new Log($"Queued user work on threadpool for file at [{path}] to {currentTarget.Extension}",
-					LogStatus.NONE));
-					ThreadPool.QueueUserWorkItem(ProcessTextFileConversion, path);
+					BeginConvertFiles(ProcessTextFileConversion);
 				}
-
-				for (int i = 0; i < filePaths.Length; i++)
-				{
-					semaphore.Wait();
-				}
-
-				saveAllButton.Invoke((Action)(() =>
-				{
-					saveAllButton.Enabled = true;
-				}));
 			}
 			else
 			{
@@ -394,7 +258,7 @@ namespace File_Converter
 					$" > {nameof(filePaths)} : {filePaths.Length}",
 				LogStatus.ERROR));
 
-				MessageBox.Show($"A problem with selected files occured, did you delete a selected file from your disk?",
+				MessageBox.Show($"An internal problem with selected files occured, please try again",
 				"An error has occured",
 				MessageBoxButtons.OK,
 				MessageBoxIcon.Error);
@@ -437,31 +301,130 @@ namespace File_Converter
 					textFileConverter.FileConverted += OnFileConverted;
 
 					Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] started conversion of file [{filePath}]",
-						LogStatus.NONE, textFileConverter));
+						LogStatus.STARTED, textFileConverter));
 					textFileConverter.ConvertFile(filePath);
 				}
 			}
-			catch (FileNotFoundException exception)
+			catch (IOException exception)
 			{
-				Logger.Instance.Enqueue(new Log($"Selected file at [{exception.FileName}] was not found on disk",
+				Logger.Instance.Enqueue(new Log($"Selected file at [{exception.Message}] was not found on disk",
 				LogStatus.ERROR));
-				MessageBox.Show($"The selected file was not found on disk, did you delete the file after selecting it?",
+				MessageBox.Show($"Conversion of file [{Path.GetFileName(filePath)}] has been aborted" +
+					$"\r\nFile was not found on disk at {filePath}, did you delete the file after selecting it?",
 				"An error has occured",
 				MessageBoxButtons.OK,
 				MessageBoxIcon.Error);
 			}
+			catch (ApplicationException exception)
+			{
+				Logger.Instance.Enqueue(new Log($"Error : [{exception.Message}] | Source: {exception.Source}| word was not found on disk?",
+				LogStatus.ERROR));
+				MessageBox.Show($"Conversion of file [{Path.GetFileName(filePath)}] has been aborted" +
+					$"\r\nMS word cannot be found in local machine",
+				"An error has occured",
+				MessageBoxButtons.OK,
+				MessageBoxIcon.Error);
+			}
+
 			semaphore.Release();
 			return;
 		}
 
-		private void NotYetImplementedMessageBox()
+		private void OnFileStartConverting(object sender, ConvertionArgs e)
 		{
-			Logger.Instance.Enqueue(new Log($"Selected target feature isn't implemented",
-				LogStatus.NOT_IMPLEMENTED));
-			MessageBox.Show($"The selected file target is not yet implemented",
-				"Not yet implemented",
-				MessageBoxButtons.OK,
-				MessageBoxIcon.Information);
+			Logger.Instance.Enqueue(new Log($"Thread effectivly [{Thread.CurrentThread.ManagedThreadId}] started converting file to {currentTarget.Extension}",
+					LogStatus.STARTED));
+		}
+
+		private void OnFileConverting(object sender, ConvertingArgs e)
+		{
+			MaterialProgressBar bar = generatedProgressBars[e.Path];
+
+			bar.Invoke((Action)(() =>
+			{
+				bar.Value = e.ConversionPercent;
+			}));
+		}
+
+		private void OnFileConverted(object sender, ConvertionArgs e)
+		{
+			MaterialButton saveButton = generatedSaveButtons[e.Path];
+
+			saveButton.Invoke((Action)(() =>
+			{
+				saveButton.Enabled = true;
+			}));
+
+			Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] finished converting file to {currentTarget.Extension}",
+					LogStatus.DONE));
+		}
+
+		private void TextFileConversionCancelButton_Click(object sender, EventArgs e)
+		{
+			CancelOrClear(textFilesConversionTableLayoutPanel);
+		}
+
+		private void SaveFileButton_Click(object sender, EventArgs e, string filePath)
+		{
+			saveFileDialog.Filter = currentTarget.GetFilter();
+			saveFileDialog.FileName = Path.GetFileNameWithoutExtension(filePath);
+
+			if (saveFileDialog.ShowDialog() == DialogResult.OK)
+			{
+				string saveTo = saveFileDialog.FileName;
+
+				try
+				{
+					Logger.Instance.Enqueue(new Log($"Started saving file {Path.GetFileName(filePath)} to {saveTo}",
+						LogStatus.STARTED));
+					FileConverter.SaveConvertedFilesKeyValueToDisk(filePath, saveTo);
+				}
+				catch (FileNotFoundException exception)
+				{
+					Logger.Instance.Enqueue(new Log($"{exception.Message} | File with key {filePath} has no paired value in convertedFiles dictionary",
+						LogStatus.ERROR));
+					MessageBox.Show($"Temporary file {exception.FileName} doesn't exist, please convert files again, if the error persists try cleaning your temporary files",
+						"File not found !",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Error);
+				}
+				catch (IOException exception)
+				{
+					Logger.Instance.Enqueue(new Log($"Error at {exception.Source} | {exception.Message} | File with key {filePath} is used by another process",
+						LogStatus.ERROR));
+					MessageBox.Show($"File path selected at {saveTo} is used by another process, please make sure to close it before saving",
+						"Selected file used by another process",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Error);
+				}
+			}
+		}
+
+		private void SaveAllButton_Click(object sender, EventArgs e)
+		{
+			saveFileDialog.Filter = FileType.GetFilter(ArchiveFileType.Zip);
+			saveFileDialog.FileName = "Converted files";
+
+			if (saveFileDialog.ShowDialog() == DialogResult.OK)
+			{
+				Logger.Instance.Enqueue(new Log($"Started saving {FileConverter.ConvertedFilesCount()} files to {saveFileDialog.FileName}",
+					LogStatus.STARTED));
+				FileConverter.SaveConvertedFilesByteArraysToZip(saveFileDialog.FileName, currentTarget);
+			}
+		}
+		#endregion
+
+		private void ShowLogsButton_Click(object sender, EventArgs e)
+		{
+			if (logWindow == null)
+			{
+				logWindow = new DebugLogWindow();
+				logWindow.Show();
+			}
+			else
+			{
+				logWindow.Show();
+			}
 		}
 
 		private void DarkModeSwitch_CheckedChanged(object sender, EventArgs e)
@@ -470,6 +433,86 @@ namespace File_Converter
 			Invalidate();
 		}
 
+		#region GENERAL METHODS
+		private void SetFileDialogFilters(Type fileType, FileDialog dialog)
+		{
+			if (fileType is null)
+			{
+				throw new ArgumentNullException(nameof(fileType));
+			}
+
+			if (dialog is null)
+			{
+				throw new ArgumentNullException(nameof(dialog));
+			}
+
+			if (!fileType.IsSubclassOf(typeof(FileType)))
+			{
+				throw new TypeAccessException($"Cannot set {nameof(fileOpenDialog)} using {fileType} " +
+					$"because it doesn't inherit from {typeof(FileType)}");
+			}
+
+			if (fileType.Equals(typeof(TextFileType)))
+			{
+				SetFilters(dialog, TextFileType.AsGenericList());
+			}
+			else if (fileType.Equals(typeof(ArchiveFileType)))
+			{
+				SetFilters(dialog, ArchiveFileType.AsGenericList());
+			}
+		}
+
+		private void SetFilters(FileDialog dialog, List<FileType> types)
+		{
+			if (dialog is null)
+			{
+				throw new ArgumentNullException(nameof(dialog));
+			}
+
+			if (types is null)
+			{
+				throw new ArgumentNullException(nameof(types));
+			}
+
+			bool first = true;
+			dialog.Filter = string.Empty;
+
+			foreach (var type in types)
+			{
+				if (first)
+				{
+					dialog.Filter = type.GetFilter();
+					first = false;
+				}
+				else
+				{
+					dialog.Filter += "|" + type.GetFilter();
+				}
+			}
+		}
+
+		private void CancelOrClear(TableLayoutPanel table)
+		{
+			if (generatedSaveButtons.Count == 0)
+			{
+				MessageBox.Show($"Nothing to clear or cancel for now", "Nothing to clear for the moment", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				return;
+			}
+
+			FileConverter.ClearGeneratedFiles();
+
+			SuspendLayout();
+			ClearTableLayoutPanel(table);
+
+			generatedProgressBars.Clear();
+			generatedSaveButtons.Clear();
+			generatedControls.Clear();
+			filePaths = null;
+
+			convertTextFilesButton.Enabled = false;
+			saveAllButton.Visible = false;
+			ResumeLayout();
+		}
 		private void ClearTableLayoutPanel(TableLayoutPanel table)
 		{
 			table.SuspendLayout();
@@ -490,5 +533,100 @@ namespace File_Converter
 			table.ResumeLayout();
 			Logger.Instance.Enqueue($"Table layout panel {table.Name} cleared | number of rows {table.RowCount} | number of columns {table.ColumnCount} | number of controls {table.Controls.Count}");
 		}
+
+		private bool IsFileLocked(FileInfo file)
+		{
+			try
+			{
+				using (FileStream stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None))
+				{
+					stream.Close();
+				}
+			}
+			catch (IOException)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		private bool CheckFiles(MaterialButton convertButton)
+		{
+			foreach (string path in filePaths)
+			{
+				if (!File.Exists(path) || IsFileLocked(new FileInfo(path)))
+				{
+					convertButton.Invoke((Action)(() =>
+					{
+						convertButton.Enabled = true;
+					}));
+
+					if (!File.Exists(path))
+					{
+						Logger.Instance.Enqueue(new Log($"A selected file at {path} doesn't exist",
+						LogStatus.ERROR));
+
+						MessageBox.Show($"Cannot find a selected file on disk, did you delete a file you selected?" +
+							$"\r\n\r\nFile path: {path}",
+						"File not found",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Error);
+						return false;
+					}
+
+					if (IsFileLocked(new FileInfo(path)))
+					{
+						Logger.Instance.Enqueue(new Log($"A selected file at {path} is used by another process",
+						LogStatus.ERROR));
+
+						MessageBox.Show($"A selected file is used by another process, please close it before converting." +
+							$"\r\n\r\nFile path: {path}",
+						"File used by another process",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Error);
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+		private void BeginConvertFiles(WaitCallback callback)
+		{
+			semaphore = new SemaphoreSlim(0);
+
+			foreach (string path in filePaths)
+			{
+				Logger.Instance.Enqueue(new Log($"Queued user work on threadpool for file at [{path}] to {currentTarget.Extension}",
+				LogStatus.NONE));
+				ThreadPool.QueueUserWorkItem(callback, path);
+			}
+
+			for (int i = 0; i < filePaths.Length; i++)
+			{
+				semaphore.Wait();
+			}
+
+			saveAllButton.Invoke((Action)(() =>
+			{
+				saveAllButton.Enabled = true;
+			}));
+		}
+
+
+		private bool CheckMicrosoftWordExists()
+		{
+			Microsoft.Office.Interop.Word.Application app = new Microsoft.Office.Interop.Word.Application();
+
+			if (app == null)
+			{
+				return false;
+			}
+
+			return true;
+		}
+		#endregion
 	}
 }

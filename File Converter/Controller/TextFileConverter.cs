@@ -2,12 +2,10 @@
 using System.IO;
 using System.Text;
 using File_Converter.Model;
-using iText.IO.Source;
-using iText.Kernel.Font;
 using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
-using Syncfusion.Pdf.Graphics;
+using Microsoft.Office.Interop.Word;
 
 namespace File_Converter.Controller
 {
@@ -27,7 +25,7 @@ namespace File_Converter.Controller
 			}
 			else if (current.Extension.Equals(TextFileType.Word.Extension))
 			{
-				throw new NotImplementedException();
+				result = WordToText(path);
 			}
 
 			OnFileConverted(path, result);
@@ -39,7 +37,7 @@ namespace File_Converter.Controller
 
 			using PdfReader reader = new PdfReader(path);
 			using PdfDocument pdf = new PdfDocument(reader);
-			
+
 			int numberOfPages = pdf.GetNumberOfPages();
 
 			using (StreamWriter writer = new StreamWriter(tempPath, false, Encoding.UTF8))
@@ -55,7 +53,7 @@ namespace File_Converter.Controller
 
 					writer.WriteLine(extractionStrategy.GetResultantText());
 					int percent = i * 100 / numberOfPages;
-					OnFileConverting(path, percent, i);
+					OnFileConverting(path, percent);
 				}
 			}
 			return tempPath;
@@ -63,7 +61,37 @@ namespace File_Converter.Controller
 
 		private string WordToText(string path)
 		{
-			return null;
+			string tempPath = GetTempPath();
+			
+			Application app = new Application();
+
+			if (app == null)
+			{
+				throw new ApplicationException("Microsoft Word isn't installed on this computer");
+			}
+
+			Document doc = app.Documents.Open(path);
+			string allWords = doc.Content.Text;
+			string[] lines = allWords.Split(
+				new[] { "\r\n", "\r", "\n" },
+				StringSplitOptions.None
+			);
+			doc.Close();
+			app.Quit();
+
+			int numberOfLines = lines.Length;
+
+			using (StreamWriter writer = new StreamWriter(tempPath, false, Encoding.UTF8))
+			{
+				for (int i = 0; i < numberOfLines; i++)
+				{
+					writer.WriteLine(lines[i]);
+					int percent = (i + 1) * 100 / numberOfLines;
+					OnFileConverting(path, percent);
+				}
+			}
+
+			return tempPath;
 		}
 	}
 }

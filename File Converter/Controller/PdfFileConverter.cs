@@ -1,9 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using File_Converter.Model;
 using iText.Kernel.Pdf;
-using iText.Layout;
-using iText.Layout.Element;
+using Microsoft.Office.Core;
+using Microsoft.Office.Interop.Word;
 
 namespace File_Converter.Controller
 {
@@ -22,7 +23,7 @@ namespace File_Converter.Controller
 			}
 			else if (current.Extension.Equals(TextFileType.Word.Extension))
 			{
-				throw new NotImplementedException();
+				result = WordToPdf(path);
 			}
 
 			OnFileConverted(path, result);
@@ -34,7 +35,7 @@ namespace File_Converter.Controller
 
 			using PdfWriter writer = new PdfWriter(tempPath);
 			using PdfDocument pdf = new PdfDocument(writer);
-			using Document document = new Document(pdf);
+			using iText.Layout.Document document = new iText.Layout.Document(pdf);
 
 			using (StreamReader streamReader = new StreamReader(path))
 			{
@@ -44,10 +45,10 @@ namespace File_Converter.Controller
 				while (!streamReader.EndOfStream)
 				{
 					string line = streamReader.ReadLine();
-					Paragraph paragraph = new Paragraph(line);
+					iText.Layout.Element.Paragraph paragraph = new iText.Layout.Element.Paragraph(line);
 					document.Add(paragraph);
 					int percent = lineNumber * 100 / lineCount;
-					OnFileConverting(path, percent, lineNumber);
+					OnFileConverting(path, percent);
 					lineNumber++;
 				}
 			}
@@ -57,7 +58,50 @@ namespace File_Converter.Controller
 
 		private string WordToPdf(string path)
 		{
-			return null;
+			string tempPath = GetTempPath();
+			
+			Application app = new Application();
+
+			if(app == null)
+			{
+				throw new ApplicationException("Microsoft Word isn't installed on this computer");
+			}
+			
+			app.DisplayAlerts = WdAlertLevel.wdAlertsNone;
+
+			var objPresSet = app.Documents;
+			var objPres = objPresSet.Open(path, MsoTriState.msoTrue, MsoTriState.msoTrue, MsoTriState.msoFalse);
+
+			try
+			{
+				OnFileConverting(path, new Random().Next(0, 41));
+				
+				objPres.ExportAsFixedFormat(
+					tempPath,
+					WdExportFormat.wdExportFormatPDF,
+					false, 
+					WdExportOptimizeFor.wdExportOptimizeForPrint,
+					WdExportRange.wdExportAllDocument
+				);
+
+				OnFileConverting(path, new Random().Next(41, 81));
+			}
+			catch
+			{
+				tempPath = null;
+			}
+			finally
+			{
+				objPres.Close();
+			}
+
+			OnFileConverting(path, new Random().Next(81, 96));
+
+			app.Quit();
+			
+			OnFileConverting(path, 100);
+
+			return tempPath;
 		}
 	}
 }
