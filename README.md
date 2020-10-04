@@ -25,7 +25,7 @@ Not implemeted :(
 # Packages used
 - [IText7](https://github.com/itext/itext7-dotnet) for creating and updating PDF documents.
 - **TRIAL** version of [Pdf Focus](https://www.sautinsoft.com/products/pdf-focus/order.php) for converting PDF files to Word documents. _(Since its a trial version limitation apply to resulting word files converted from pdf files)_
-- [Material skin form winforms](https://github.com/leocb/MaterialSkin) for the UI.
+- [Material skin for winforms](https://github.com/leocb/MaterialSkin) for the UI.
 
 # Some Images
 Maybe layer <-:
