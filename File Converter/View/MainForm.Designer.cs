@@ -44,6 +44,17 @@
 			this.convertTextFilesTitleLabel = new MaterialSkin.Controls.MaterialLabel();
 			this.materialLabel2 = new MaterialSkin.Controls.MaterialLabel();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.imageFileConversionTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+			this.materialLabel10 = new MaterialSkin.Controls.MaterialLabel();
+			this.clearOrCancelImageFileConversion = new MaterialSkin.Controls.MaterialButton();
+			this.selectImageFilesButton = new MaterialSkin.Controls.MaterialButton();
+			this.imageFileConvertToComboBox = new MaterialSkin.Controls.MaterialComboBox();
+			this.convertImageFilesButton = new MaterialSkin.Controls.MaterialButton();
+			this.materialLabel11 = new MaterialSkin.Controls.MaterialLabel();
+			this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
+			this.materialLabel12 = new MaterialSkin.Controls.MaterialLabel();
+			this.materialLabel13 = new MaterialSkin.Controls.MaterialLabel();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
 			this.safeConversionSwitch = new MaterialSkin.Controls.MaterialSwitch();
@@ -62,10 +73,14 @@
 			this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
 			this.textFileConversionBackgroundWorker = new System.ComponentModel.BackgroundWorker();
 			this.settingsToolTip = new System.Windows.Forms.ToolTip(this.components);
+			this.imageFileConversionBackgroundWorker = new System.ComponentModel.BackgroundWorker();
 			this.materialTabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
+			this.tabPage2.SuspendLayout();
+			this.tableLayoutPanel5.SuspendLayout();
+			this.tableLayoutPanel6.SuspendLayout();
 			this.tabPage3.SuspendLayout();
 			this.tableLayoutPanel3.SuspendLayout();
 			this.tableLayoutPanel4.SuspendLayout();
@@ -237,13 +252,13 @@
 			this.convertTextFilesButton.Enabled = false;
 			this.convertTextFilesButton.HighEmphasis = true;
 			this.convertTextFilesButton.Icon = null;
-			this.convertTextFilesButton.Location = new System.Drawing.Point(801, 168);
+			this.convertTextFilesButton.Location = new System.Drawing.Point(781, 168);
 			this.convertTextFilesButton.Margin = new System.Windows.Forms.Padding(4, 15, 4, 4);
 			this.convertTextFilesButton.MouseState = MaterialSkin.MouseState.HOVER;
 			this.convertTextFilesButton.Name = "convertTextFilesButton";
-			this.convertTextFilesButton.Size = new System.Drawing.Size(129, 36);
+			this.convertTextFilesButton.Size = new System.Drawing.Size(168, 36);
 			this.convertTextFilesButton.TabIndex = 4;
-			this.convertTextFilesButton.Text = "Convert files";
+			this.convertTextFilesButton.Text = "Convert text files";
 			this.convertTextFilesButton.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
 			this.convertTextFilesButton.UseAccentColor = false;
 			this.convertTextFilesButton.UseVisualStyleBackColor = true;
@@ -288,6 +303,7 @@
 			this.convertTextFilesTitleLabel.Depth = 0;
 			this.convertTextFilesTitleLabel.Font = new System.Drawing.Font("Roboto", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
 			this.convertTextFilesTitleLabel.FontType = MaterialSkin.MaterialSkinManager.fontType.H5;
+			this.convertTextFilesTitleLabel.HighEmphasis = true;
 			this.convertTextFilesTitleLabel.Location = new System.Drawing.Point(485, 3);
 			this.convertTextFilesTitleLabel.MouseState = MaterialSkin.MouseState.HOVER;
 			this.convertTextFilesTitleLabel.Name = "convertTextFilesTitleLabel";
@@ -301,25 +317,239 @@
 			this.materialLabel2.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.materialLabel2.AutoSize = true;
 			this.materialLabel2.Depth = 0;
+			this.materialLabel2.Enabled = false;
 			this.materialLabel2.Font = new System.Drawing.Font("Roboto Medium", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
 			this.materialLabel2.FontType = MaterialSkin.MaterialSkinManager.fontType.Subtitle2;
-			this.materialLabel2.Location = new System.Drawing.Point(417, 55);
+			this.materialLabel2.Location = new System.Drawing.Point(389, 55);
 			this.materialLabel2.MouseState = MaterialSkin.MouseState.HOVER;
 			this.materialLabel2.Name = "materialLabel2";
-			this.materialLabel2.Size = new System.Drawing.Size(320, 17);
+			this.materialLabel2.Size = new System.Drawing.Size(375, 17);
 			this.materialLabel2.TabIndex = 1;
-			this.materialLabel2.Text = "Choose a text file (.txt, .pdf or .docx) and convert it";
+			this.materialLabel2.Text = "Choose some files and convert them to another text format";
 			// 
 			// tabPage2
 			// 
 			this.tabPage2.BackColor = System.Drawing.Color.White;
-			this.tabPage2.ImageKey = "video_icon";
+			this.tabPage2.Controls.Add(this.imageFileConversionTableLayoutPanel);
+			this.tabPage2.Controls.Add(this.tableLayoutPanel5);
+			this.tabPage2.Controls.Add(this.tableLayoutPanel6);
+			this.tabPage2.ImageKey = "image_icon";
 			this.tabPage2.Location = new System.Drawing.Point(4, 25);
 			this.tabPage2.Name = "tabPage2";
 			this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
 			this.tabPage2.Size = new System.Drawing.Size(1272, 691);
 			this.tabPage2.TabIndex = 1;
-			this.tabPage2.Text = "Video Files";
+			this.tabPage2.Text = "Image Files";
+			// 
+			// imageFileConversionTableLayoutPanel
+			// 
+			this.imageFileConversionTableLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.imageFileConversionTableLayoutPanel.AutoScroll = true;
+			this.imageFileConversionTableLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.imageFileConversionTableLayoutPanel.ColumnCount = 2;
+			this.imageFileConversionTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 72.43187F));
+			this.imageFileConversionTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.56813F));
+			this.imageFileConversionTableLayoutPanel.Location = new System.Drawing.Point(39, 350);
+			this.imageFileConversionTableLayoutPanel.Name = "imageFileConversionTableLayoutPanel";
+			this.imageFileConversionTableLayoutPanel.RowCount = 1;
+			this.imageFileConversionTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.imageFileConversionTableLayoutPanel.Size = new System.Drawing.Size(1154, 323);
+			this.imageFileConversionTableLayoutPanel.TabIndex = 11;
+			// 
+			// tableLayoutPanel5
+			// 
+			this.tableLayoutPanel5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.tableLayoutPanel5.ColumnCount = 2;
+			this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanel5.Controls.Add(this.materialLabel10, 1, 1);
+			this.tableLayoutPanel5.Controls.Add(this.clearOrCancelImageFileConversion, 0, 3);
+			this.tableLayoutPanel5.Controls.Add(this.selectImageFilesButton, 0, 0);
+			this.tableLayoutPanel5.Controls.Add(this.imageFileConvertToComboBox, 0, 2);
+			this.tableLayoutPanel5.Controls.Add(this.convertImageFilesButton, 1, 3);
+			this.tableLayoutPanel5.Controls.Add(this.materialLabel11, 0, 1);
+			this.tableLayoutPanel5.Location = new System.Drawing.Point(39, 105);
+			this.tableLayoutPanel5.Name = "tableLayoutPanel5";
+			this.tableLayoutPanel5.RowCount = 4;
+			this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 32.52427F));
+			this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10.67961F));
+			this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 28.15534F));
+			this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 29.61165F));
+			this.tableLayoutPanel5.Size = new System.Drawing.Size(1154, 212);
+			this.tableLayoutPanel5.TabIndex = 10;
+			// 
+			// materialLabel10
+			// 
+			this.materialLabel10.Anchor = System.Windows.Forms.AnchorStyles.Right;
+			this.materialLabel10.AutoSize = true;
+			this.materialLabel10.Depth = 0;
+			this.materialLabel10.Font = new System.Drawing.Font("Roboto", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			this.materialLabel10.Location = new System.Drawing.Point(936, 69);
+			this.materialLabel10.Margin = new System.Windows.Forms.Padding(0, 0, 50, 0);
+			this.materialLabel10.MouseState = MaterialSkin.MouseState.HOVER;
+			this.materialLabel10.Name = "materialLabel10";
+			this.materialLabel10.Size = new System.Drawing.Size(168, 19);
+			this.materialLabel10.TabIndex = 7;
+			this.materialLabel10.Text = "Total size limit : 200MB";
+			this.materialLabel10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.materialLabel10.Visible = false;
+			// 
+			// clearOrCancelImageFileConversion
+			// 
+			this.clearOrCancelImageFileConversion.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.clearOrCancelImageFileConversion.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.clearOrCancelImageFileConversion.Depth = 0;
+			this.clearOrCancelImageFileConversion.DrawShadows = true;
+			this.clearOrCancelImageFileConversion.HighEmphasis = true;
+			this.clearOrCancelImageFileConversion.Icon = null;
+			this.clearOrCancelImageFileConversion.Location = new System.Drawing.Point(220, 168);
+			this.clearOrCancelImageFileConversion.Margin = new System.Windows.Forms.Padding(4, 15, 4, 4);
+			this.clearOrCancelImageFileConversion.MouseState = MaterialSkin.MouseState.HOVER;
+			this.clearOrCancelImageFileConversion.Name = "clearOrCancelImageFileConversion";
+			this.clearOrCancelImageFileConversion.Size = new System.Drawing.Size(136, 36);
+			this.clearOrCancelImageFileConversion.TabIndex = 5;
+			this.clearOrCancelImageFileConversion.Text = "Cancel / Clear";
+			this.clearOrCancelImageFileConversion.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+			this.clearOrCancelImageFileConversion.UseAccentColor = false;
+			this.clearOrCancelImageFileConversion.UseVisualStyleBackColor = true;
+			// 
+			// selectImageFilesButton
+			// 
+			this.selectImageFilesButton.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.selectImageFilesButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.tableLayoutPanel5.SetColumnSpan(this.selectImageFilesButton, 2);
+			this.selectImageFilesButton.Depth = 0;
+			this.selectImageFilesButton.DrawShadows = true;
+			this.selectImageFilesButton.HighEmphasis = true;
+			this.selectImageFilesButton.Icon = null;
+			this.selectImageFilesButton.Location = new System.Drawing.Point(519, 11);
+			this.selectImageFilesButton.Margin = new System.Windows.Forms.Padding(4, 6, 4, 15);
+			this.selectImageFilesButton.MouseState = MaterialSkin.MouseState.HOVER;
+			this.selectImageFilesButton.Name = "selectImageFilesButton";
+			this.selectImageFilesButton.Size = new System.Drawing.Size(115, 36);
+			this.selectImageFilesButton.TabIndex = 1;
+			this.selectImageFilesButton.Text = "Select Files";
+			this.selectImageFilesButton.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+			this.selectImageFilesButton.UseAccentColor = false;
+			this.selectImageFilesButton.UseVisualStyleBackColor = true;
+			this.selectImageFilesButton.Click += new System.EventHandler(this.SelectImageFilesButton_Click);
+			// 
+			// imageFileConvertToComboBox
+			// 
+			this.imageFileConvertToComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.imageFileConvertToComboBox.AutoResize = false;
+			this.imageFileConvertToComboBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+			this.tableLayoutPanel5.SetColumnSpan(this.imageFileConvertToComboBox, 2);
+			this.imageFileConvertToComboBox.Depth = 0;
+			this.imageFileConvertToComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+			this.imageFileConvertToComboBox.DropDownHeight = 174;
+			this.imageFileConvertToComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.imageFileConvertToComboBox.DropDownWidth = 121;
+			this.imageFileConvertToComboBox.Enabled = false;
+			this.imageFileConvertToComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
+			this.imageFileConvertToComboBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+			this.imageFileConvertToComboBox.FormattingEnabled = true;
+			this.imageFileConvertToComboBox.Hint = "Convert to";
+			this.imageFileConvertToComboBox.IntegralHeight = false;
+			this.imageFileConvertToComboBox.ItemHeight = 43;
+			this.imageFileConvertToComboBox.Location = new System.Drawing.Point(50, 93);
+			this.imageFileConvertToComboBox.Margin = new System.Windows.Forms.Padding(50, 3, 50, 3);
+			this.imageFileConvertToComboBox.MaxDropDownItems = 4;
+			this.imageFileConvertToComboBox.MouseState = MaterialSkin.MouseState.OUT;
+			this.imageFileConvertToComboBox.Name = "imageFileConvertToComboBox";
+			this.imageFileConvertToComboBox.Size = new System.Drawing.Size(1054, 49);
+			this.imageFileConvertToComboBox.TabIndex = 3;
+			this.imageFileConvertToComboBox.UseAccent = false;
+			this.imageFileConvertToComboBox.SelectedIndexChanged += new System.EventHandler(this.ImageFileConvertToComboBox_SelectedIndexChanged);
+			// 
+			// convertImageFilesButton
+			// 
+			this.convertImageFilesButton.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.convertImageFilesButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.convertImageFilesButton.Depth = 0;
+			this.convertImageFilesButton.DrawShadows = true;
+			this.convertImageFilesButton.Enabled = false;
+			this.convertImageFilesButton.HighEmphasis = true;
+			this.convertImageFilesButton.Icon = null;
+			this.convertImageFilesButton.Location = new System.Drawing.Point(776, 168);
+			this.convertImageFilesButton.Margin = new System.Windows.Forms.Padding(4, 15, 4, 4);
+			this.convertImageFilesButton.MouseState = MaterialSkin.MouseState.HOVER;
+			this.convertImageFilesButton.Name = "convertImageFilesButton";
+			this.convertImageFilesButton.Size = new System.Drawing.Size(178, 36);
+			this.convertImageFilesButton.TabIndex = 4;
+			this.convertImageFilesButton.Text = "Convert image files";
+			this.convertImageFilesButton.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+			this.convertImageFilesButton.UseAccentColor = false;
+			this.convertImageFilesButton.UseVisualStyleBackColor = true;
+			this.convertImageFilesButton.Click += new System.EventHandler(this.ConvertImageFilesButton_Click);
+			// 
+			// materialLabel11
+			// 
+			this.materialLabel11.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.materialLabel11.AutoSize = true;
+			this.materialLabel11.Depth = 0;
+			this.materialLabel11.Font = new System.Drawing.Font("Roboto", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			this.materialLabel11.Location = new System.Drawing.Point(50, 69);
+			this.materialLabel11.Margin = new System.Windows.Forms.Padding(50, 0, 3, 0);
+			this.materialLabel11.MouseState = MaterialSkin.MouseState.HOVER;
+			this.materialLabel11.Name = "materialLabel11";
+			this.materialLabel11.Size = new System.Drawing.Size(172, 19);
+			this.materialLabel11.TabIndex = 6;
+			this.materialLabel11.Text = "Size limit per file : 20MB";
+			this.materialLabel11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.materialLabel11.Visible = false;
+			// 
+			// tableLayoutPanel6
+			// 
+			this.tableLayoutPanel6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.tableLayoutPanel6.ColumnCount = 1;
+			this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel6.Controls.Add(this.materialLabel12, 0, 0);
+			this.tableLayoutPanel6.Controls.Add(this.materialLabel13, 0, 1);
+			this.tableLayoutPanel6.Location = new System.Drawing.Point(39, 6);
+			this.tableLayoutPanel6.Name = "tableLayoutPanel6";
+			this.tableLayoutPanel6.RowCount = 2;
+			this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 38.26087F));
+			this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 61.73913F));
+			this.tableLayoutPanel6.Size = new System.Drawing.Size(1154, 93);
+			this.tableLayoutPanel6.TabIndex = 9;
+			// 
+			// materialLabel12
+			// 
+			this.materialLabel12.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.materialLabel12.AutoSize = true;
+			this.materialLabel12.Depth = 0;
+			this.materialLabel12.Font = new System.Drawing.Font("Roboto", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
+			this.materialLabel12.FontType = MaterialSkin.MaterialSkinManager.fontType.H5;
+			this.materialLabel12.HighEmphasis = true;
+			this.materialLabel12.Location = new System.Drawing.Point(473, 3);
+			this.materialLabel12.MouseState = MaterialSkin.MouseState.HOVER;
+			this.materialLabel12.Name = "materialLabel12";
+			this.materialLabel12.Size = new System.Drawing.Size(208, 29);
+			this.materialLabel12.TabIndex = 0;
+			this.materialLabel12.Text = "Convert image files";
+			this.materialLabel12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// materialLabel13
+			// 
+			this.materialLabel13.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.materialLabel13.AutoSize = true;
+			this.materialLabel13.Depth = 0;
+			this.materialLabel13.Enabled = false;
+			this.materialLabel13.Font = new System.Drawing.Font("Roboto Medium", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
+			this.materialLabel13.FontType = MaterialSkin.MaterialSkinManager.fontType.Subtitle2;
+			this.materialLabel13.Location = new System.Drawing.Point(382, 55);
+			this.materialLabel13.MouseState = MaterialSkin.MouseState.HOVER;
+			this.materialLabel13.Name = "materialLabel13";
+			this.materialLabel13.Size = new System.Drawing.Size(390, 17);
+			this.materialLabel13.TabIndex = 1;
+			this.materialLabel13.Text = "Choose some files and convert them to another image format";
 			// 
 			// tabPage3
 			// 
@@ -560,13 +790,12 @@
 			this.drawerImageList.Images.SetKeyName(0, "text_icon");
 			this.drawerImageList.Images.SetKeyName(1, "video_icon");
 			this.drawerImageList.Images.SetKeyName(2, "settings_icon");
+			this.drawerImageList.Images.SetKeyName(3, "image_icon");
 			// 
 			// fileOpenDialog
 			// 
-			this.fileOpenDialog.Filter = "Text file|*.txt|PDF file|*.pdf|Word files|*.docx";
 			this.fileOpenDialog.Multiselect = true;
 			this.fileOpenDialog.Title = "Choose a file";
-			this.fileOpenDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.FileOpenDialog_FileOk);
 			// 
 			// textFileConversionBackgroundWorker
 			// 
@@ -576,6 +805,10 @@
 			// 
 			this.settingsToolTip.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
 			this.settingsToolTip.ToolTipTitle = "Informations";
+			// 
+			// imageFileConversionBackgroundWorker
+			// 
+			this.imageFileConversionBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ImageFileConversionBackgroundWorker_DoWork);
 			// 
 			// MainForm
 			// 
@@ -598,6 +831,11 @@
 			this.tableLayoutPanel2.PerformLayout();
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
+			this.tabPage2.ResumeLayout(false);
+			this.tableLayoutPanel5.ResumeLayout(false);
+			this.tableLayoutPanel5.PerformLayout();
+			this.tableLayoutPanel6.ResumeLayout(false);
+			this.tableLayoutPanel6.PerformLayout();
 			this.tabPage3.ResumeLayout(false);
 			this.tableLayoutPanel3.ResumeLayout(false);
 			this.tableLayoutPanel3.PerformLayout();
@@ -640,6 +878,18 @@
 		private MaterialSkin.Controls.MaterialLabel materialLabel9;
 		private System.Windows.Forms.ToolTip settingsToolTip;
 		private MaterialSkin.Controls.MaterialSwitch safeConversionSwitch;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
+		private MaterialSkin.Controls.MaterialLabel materialLabel10;
+		private MaterialSkin.Controls.MaterialButton clearOrCancelImageFileConversion;
+		private MaterialSkin.Controls.MaterialButton selectImageFilesButton;
+		private MaterialSkin.Controls.MaterialComboBox imageFileConvertToComboBox;
+		private MaterialSkin.Controls.MaterialButton convertImageFilesButton;
+		private MaterialSkin.Controls.MaterialLabel materialLabel11;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
+		private MaterialSkin.Controls.MaterialLabel materialLabel12;
+		private MaterialSkin.Controls.MaterialLabel materialLabel13;
+		private System.Windows.Forms.TableLayoutPanel imageFileConversionTableLayoutPanel;
+		private System.ComponentModel.BackgroundWorker imageFileConversionBackgroundWorker;
 	}
 }
 

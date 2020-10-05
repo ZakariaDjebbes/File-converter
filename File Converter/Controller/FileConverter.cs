@@ -125,6 +125,7 @@ namespace File_Converter.Controller
 
 			convertedFiles.Clear();
 		}
+
 		protected static int GetNumberOfLines(StreamReader streamReader, bool reset = true)
 		{
 			int lineCount = 0;

@@ -3,7 +3,7 @@ using File_Converter.Model;
 using SautinSoft;
 using Word = Microsoft.Office.Interop.Word;
 
-namespace File_Converter.Controller
+namespace File_Converter.Controller.TextConversion
 {
 	public class WordFileConverter : FileConverter
 	{
@@ -68,10 +68,11 @@ namespace File_Converter.Controller
 			PdfFocus pdf = new PdfFocus();
 			pdf.OpenPdf(path);
 
-			if(pdf.PageCount > 0)
+			if (pdf.PageCount > 0)
 			{
 				pdf.WordOptions.Format = PdfFocus.CWordOptions.eWordDocument.Docx;
-				pdf.NotifyPageProgress += (current, total) => {
+				pdf.NotifyPageProgress += (current, total) =>
+				{
 					int percent = current * 100 / total;
 					OnFileConverting(path, percent);
 				};
