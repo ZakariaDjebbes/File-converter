@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using File_Converter.Controller;
 using File_Converter.Controller.ImageConversion;
@@ -17,12 +18,12 @@ namespace File_Converter
 {
 	public partial class MainForm : MaterialForm
 	{
-		private SemaphoreSlim semaphore;
 		private readonly MaterialSkinManager materialSkinManager;
 		private DebugLogWindow logWindow = null;
 		private FileType currentTarget;
 		private Dictionary<string, MaterialProgressBar> generatedProgressBars = new Dictionary<string, MaterialProgressBar>();
 		private Dictionary<string, MaterialButton> generatedSaveButtons = new Dictionary<string, MaterialButton>();
+		private Dictionary<string, Task> generatedTasks = new Dictionary<string, Task>();
 		private List<Control> generatedControls = new List<Control>();
 		private string[] filePaths;
 
@@ -255,15 +256,16 @@ namespace File_Converter
 			conversionButton.Enabled = true;
 		}
 
-		private string ResetAndGetExtensionOfFileOpenDialog()
+		private string ResetAndGetExtensionOfFileOpenDialog(TableLayoutPanel panel)
 		{
 			filePaths = fileOpenDialog.FileNames;
 			FileConverter.ClearGeneratedFiles();
-			ClearTableLayoutPanel(textFilesConversionTableLayoutPanel);
+			ClearTableLayoutPanel(panel);
 
 			//empty previously generated progressbars & save buttons
 			generatedProgressBars = new Dictionary<string, MaterialProgressBar>();
 			generatedSaveButtons = new Dictionary<string, MaterialButton>();
+			generatedTasks = new Dictionary<string, Task>();
 
 			//since all files should be of the same extension (.txt, .pdf, .docx...) we can use the first file to reprenst all files
 			//get file extension
@@ -275,7 +277,10 @@ namespace File_Converter
 		{
 			if (generatedSaveButtons.Count == 0)
 			{
-				MessageBox.Show($"Nothing to clear or cancel for now", "Nothing to clear for the moment", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show($"Nothing to clear or cancel for now",
+					"Nothing to clear for the moment",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Information);
 				return;
 			}
 
@@ -286,12 +291,49 @@ namespace File_Converter
 
 			generatedProgressBars.Clear();
 			generatedSaveButtons.Clear();
+			generatedTasks.Clear();
 			generatedControls.Clear();
 			filePaths = null;
 
 			convertTextFilesButton.Enabled = false;
 			saveAllButton.Visible = false;
 			ResumeLayout();
+		}
+
+		private void SaveFileButton_Click(object sender, EventArgs e, string filePath)
+		{
+			saveFileDialog.Filter = currentTarget.GetFilter();
+			saveFileDialog.FileName = Path.GetFileNameWithoutExtension(filePath);
+
+			if (saveFileDialog.ShowDialog() == DialogResult.OK)
+			{
+				string saveTo = saveFileDialog.FileName;
+
+				try
+				{
+					Logger.Instance.Enqueue(new Log($"Started saving file {Path.GetFileName(filePath)} to {saveTo}",
+						LogStatus.STARTED));
+					FileConverter.SaveConvertedFilesKeyValueToDisk(filePath, saveTo);
+				}
+				catch (FileNotFoundException exception)
+				{
+					Logger.Instance.Enqueue(new Log($"{exception.Message} | File with key {filePath} has no paired value in convertedFiles dictionary",
+						LogStatus.ERROR));
+					MessageBox.Show($"Temporary file {exception.FileName} doesn't exist, please convert files again, if the error persists try cleaning your temporary files",
+						"File not found !",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Error);
+				}
+				catch (IOException exception)
+				{
+					Logger.Instance.Enqueue(new Log($"Error at {exception.Source} | {exception.Message} | File with key {filePath} is used by another process",
+						LogStatus.ERROR));
+					MessageBox.Show($"File path selected at {saveTo} is used by another process, please make sure to close it before saving",
+						"Selected file used by another process",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Error);
+				}
+			}
 		}
 
 		private void ClearTableLayoutPanel(TableLayoutPanel table)
@@ -374,21 +416,21 @@ namespace File_Converter
 			return true;
 		}
 
-		private void BeginConvertFiles(WaitCallback callback)
+		private async void BeginConvertFiles(Action<string> action)
 		{
-			semaphore = new SemaphoreSlim(0);
+			generatedTasks.Clear();
 
 			foreach (string path in filePaths)
 			{
 				Logger.Instance.Enqueue(new Log($"Queued user work on threadpool for file at [{path}] to {currentTarget.Extension}",
 				LogStatus.NONE));
-				ThreadPool.QueueUserWorkItem(callback, path);
+				generatedTasks.Add(path, Task.Factory.StartNew(() => action(path)));
 			}
 
-			for (int i = 0; i < filePaths.Length; i++)
-			{
-				semaphore.Wait();
-			}
+			Logger.Instance.Enqueue(new Log($"Queued user work on threadpool for file at to {currentTarget.Extension}",
+				LogStatus.NONE));
+
+			await Task.WhenAll(generatedTasks.Values);
 
 			saveAllButton.Invoke((Action)(() =>
 			{
@@ -418,7 +460,7 @@ namespace File_Converter
 
 			if (fileOpenDialog.ShowDialog() == DialogResult.OK)
 			{
-				string ext = ResetAndGetExtensionOfFileOpenDialog();
+				string ext = ResetAndGetExtensionOfFileOpenDialog(textFilesConversionTableLayoutPanel);
 				SetLayout(typeof(TextFileType), ext, textFilesConversionTableLayoutPanel, textFileConvertToComboBox, convertTextFilesButton);
 			}
 		}
@@ -494,9 +536,8 @@ namespace File_Converter
 			}
 		}
 
-		private void ProcessTextFileConversion(object param)
+		private void ProcessTextFileConversion(string filePath)
 		{
-			string filePath = param as string;
 			try
 			{
 				if (currentTarget.Extension.Equals(TextFileType.Pdf.Extension))
@@ -555,7 +596,6 @@ namespace File_Converter
 				MessageBoxIcon.Error);
 			}
 
-			semaphore.Release();
 			return;
 		}
 
@@ -592,43 +632,6 @@ namespace File_Converter
 		{
 			CancelOrClear(textFilesConversionTableLayoutPanel);
 		}
-
-		private void SaveFileButton_Click(object sender, EventArgs e, string filePath)
-		{
-			saveFileDialog.Filter = currentTarget.GetFilter();
-			saveFileDialog.FileName = Path.GetFileNameWithoutExtension(filePath);
-
-			if (saveFileDialog.ShowDialog() == DialogResult.OK)
-			{
-				string saveTo = saveFileDialog.FileName;
-
-				try
-				{
-					Logger.Instance.Enqueue(new Log($"Started saving file {Path.GetFileName(filePath)} to {saveTo}",
-						LogStatus.STARTED));
-					FileConverter.SaveConvertedFilesKeyValueToDisk(filePath, saveTo);
-				}
-				catch (FileNotFoundException exception)
-				{
-					Logger.Instance.Enqueue(new Log($"{exception.Message} | File with key {filePath} has no paired value in convertedFiles dictionary",
-						LogStatus.ERROR));
-					MessageBox.Show($"Temporary file {exception.FileName} doesn't exist, please convert files again, if the error persists try cleaning your temporary files",
-						"File not found !",
-						MessageBoxButtons.OK,
-						MessageBoxIcon.Error);
-				}
-				catch (IOException exception)
-				{
-					Logger.Instance.Enqueue(new Log($"Error at {exception.Source} | {exception.Message} | File with key {filePath} is used by another process",
-						LogStatus.ERROR));
-					MessageBox.Show($"File path selected at {saveTo} is used by another process, please make sure to close it before saving",
-						"Selected file used by another process",
-						MessageBoxButtons.OK,
-						MessageBoxIcon.Error);
-				}
-			}
-		}
-
 		private void SaveAllButton_Click(object sender, EventArgs e)
 		{
 			saveFileDialog.Filter = FileType.GetFilter(ArchiveFileType.Zip);
@@ -650,7 +653,7 @@ namespace File_Converter
 
 			if (fileOpenDialog.ShowDialog() == DialogResult.OK)
 			{
-				string ext = ResetAndGetExtensionOfFileOpenDialog();
+				string ext = ResetAndGetExtensionOfFileOpenDialog(imageFileConversionTableLayoutPanel);
 				SetLayout(typeof(ImageFileType),
 					ext,
 					imageFileConversionTableLayoutPanel,
@@ -715,9 +718,8 @@ namespace File_Converter
 			}
 		}
 
-		private void ProcessImageFileConversion(object param)
+		private void ProcessImageFileConversion(string filePath)
 		{
-			string filePath = param as string;
 			try
 			{
 				if (currentTarget.Extension.Equals(ImageFileType.Jpg.Extension))
@@ -727,8 +729,8 @@ namespace File_Converter
 					jpgFileConverter.FileConverting += OnFileConverting;
 					jpgFileConverter.FileConverted += OnFileConverted;
 
-					//Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] launched conversion of file [{filePath}]",
-					//	LogStatus.NONE, pdfFileConverter));
+					Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] started conversion of file [{filePath}]",
+						LogStatus.STARTED, jpgFileConverter));
 					jpgFileConverter.ConvertFile(filePath);
 				}
 				else if (currentTarget.Extension.Equals(ImageFileType.Png.Extension))
@@ -738,8 +740,8 @@ namespace File_Converter
 					pngFileConverter.FileConverting += OnFileConverting;
 					pngFileConverter.FileConverted += OnFileConverted;
 
-					//Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] launched conversion of file [{filePath}]",
-					//	LogStatus.NONE, wordFileConverter));
+					Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] started conversion of file [{filePath}]",
+						LogStatus.STARTED, pngFileConverter));
 					pngFileConverter.ConvertFile(filePath);
 				}
 				else if (currentTarget.Extension.Equals(ImageFileType.Gif.Extension))
@@ -749,8 +751,8 @@ namespace File_Converter
 					gifFileConverter.FileConverting += OnFileConverting;
 					gifFileConverter.FileConverted += OnFileConverted;
 
-					//Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] started conversion of file [{filePath}]",
-					//	LogStatus.STARTED, textFileConverter));
+					Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] started conversion of file [{filePath}]",
+						LogStatus.STARTED, gifFileConverter));
 					gifFileConverter.ConvertFile(filePath);
 				}
 				else if (currentTarget.Extension.Equals(ImageFileType.Webp.Extension))
@@ -760,10 +762,31 @@ namespace File_Converter
 					webpFileConverter.FileConverting += OnFileConverting;
 					webpFileConverter.FileConverted += OnFileConverted;
 
+					Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] started conversion of file [{filePath}]",
+						LogStatus.STARTED, webpFileConverter));
 					webpFileConverter.ConvertFile(filePath);
-					//Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] started conversion of file [{filePath}]",
-					//	LogStatus.STARTED, textFileConverter));
-					webpFileConverter.ConvertFile(filePath);
+				}
+				else if (currentTarget.Extension.Equals(ImageFileType.Bmp.Extension))
+				{
+					BmpFileConverter bmpFileConverter = new BmpFileConverter();
+					bmpFileConverter.FileStartConverting += OnFileStartConverting;
+					bmpFileConverter.FileConverting += OnFileConverting;
+					bmpFileConverter.FileConverted += OnFileConverted;
+
+					Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] started conversion of file [{filePath}]",
+						LogStatus.STARTED, bmpFileConverter));
+					bmpFileConverter.ConvertFile(filePath);
+				}
+				else if (currentTarget.Extension.Equals(ImageFileType.Webp.Extension))
+				{
+					TiffFileConverter tiffFileConverter = new TiffFileConverter();
+					tiffFileConverter.FileStartConverting += OnFileStartConverting;
+					tiffFileConverter.FileConverting += OnFileConverting;
+					tiffFileConverter.FileConverted += OnFileConverted;
+
+					Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] started conversion of file [{filePath}]",
+						LogStatus.STARTED, tiffFileConverter));
+					tiffFileConverter.ConvertFile(filePath);
 				}
 			}
 			catch (IOException exception)
@@ -777,7 +800,6 @@ namespace File_Converter
 				MessageBoxIcon.Error);
 			}
 
-			semaphore.Release();
 			return;
 		}
 	}

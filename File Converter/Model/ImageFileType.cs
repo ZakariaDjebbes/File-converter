@@ -12,15 +12,19 @@ namespace File_Converter.Model
 		public static readonly ImageFileType Png = new ImageFileType("Portable Network Graphics (*.png)", ".png");
 		public static readonly ImageFileType Gif = new ImageFileType("Graphics Interchange Format (*.gif)", ".gif");
 		public static readonly ImageFileType Webp = new ImageFileType("WebP (*.webp)", ".webp");
+		public static readonly ImageFileType Bmp = new ImageFileType("Bitmap image file (*.bmp)", ".bmp");
+		public static readonly ImageFileType Tiff = new ImageFileType("Tagged Image File Format (*.tiff)", ".tiff");
 
 		static ImageFileType()
 		{
 			valuePairs = new Dictionary<string, ImageFileType>
 			{
-				{Jpg.Extension, Jpg},
-				{Png.Extension, Png},
-				{Gif.Extension, Gif},
-				{Webp.Extension, Webp},
+				{ Jpg.Extension, Jpg},
+				{ Png.Extension, Png},
+				{ Gif.Extension, Gif},
+				{ Webp.Extension, Webp},
+				{ Bmp.Extension, Bmp },
+				{ Tiff.Extension, Tiff},
 			};
 		}
 

@@ -14,7 +14,6 @@ namespace File_Converter.View
 		public DebugLogWindow()
 		{
 			InitializeComponent();
-			logger.Enqueue($"Theme {MaterialSkinManager.Instance.Theme}");
 			logger.StartLogging += OnStartLogging;
 			logger.Logging += OnLogging;
 			logger.EndLogging += OnEndLogging;

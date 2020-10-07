@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Drawing;
 using File_Converter.Model;
-using System.Drawing.Imaging;
 
 namespace File_Converter.Controller.ImageConversion
 {
@@ -25,17 +23,10 @@ namespace File_Converter.Controller.ImageConversion
 			}
 			else if (current.Extension.Equals(ImageFileType.Gif.Extension))
 			{
-				result = WebpToGif(path);
+				throw new NotImplementedException();
 			}
 
 			OnFileConverted(path, result);
-		}
-
-		private string WebpToGif(string path)
-		{
-			string tempPath = GetTempPath();
-
-			return tempPath;
 		}
 	}
 }
