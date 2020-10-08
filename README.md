@@ -2,6 +2,7 @@
 
 A software made with C# (.NET framework 4.8) Winforms that coverts between diffrent file formats (image, text, video...)
 
+As a winforms application, this only runs on **Windows** 
 # Text files
 
 Implemented file formats:
@@ -20,7 +21,26 @@ Table of possible conversions
 
 # Image files
 
-Not implemeted :(
+Implemented file formats:
+- PNG file (*.png)
+- JPG files (*.jpg)
+- ICO files (*.ico) 
+- WEBP files (*.webp) (_not yet implemented_)
+- GIF files (*.gif)
+- TIFF files (*.tiff)
+- BMP files (*.bmp)
+
+Table of possible conversions
+
+|  From / To | .png | .jpg | .ico | .webp| .gif | .tiff| .bmp |
+| ---------- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| .png       | N/A  | YES  | YES  | NO   | YES  | YES  | YES  |
+| .jpg       | YES  | N/A  | YES  | NO   | YES  | YES  | YES  |
+| .ico       | YES  | YES  | N/A  | NO   | YES  | YES  | YES  |
+| .webp      | YES  | YES  | YES  | N/A  | YES  | YES  | YES  |
+| .gif       | YES  | YES  | YES  | NO   | N/A  | YES  | YES  |
+| .tiff      | YES  | YES  | YES  | NO   | YES  | N/A  | YES  |
+| .bmp       | YES  | YES  | YES  | NO   | YES  | YES  | N/A  |
 
 # Packages used
 - [IText7](https://github.com/itext/itext7-dotnet) for creating and updating PDF documents.
