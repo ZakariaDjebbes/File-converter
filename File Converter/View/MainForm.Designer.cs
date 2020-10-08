@@ -1,4 +1,6 @@
-﻿namespace File_Converter
+﻿using System.Windows.Forms;
+
+namespace File_Converter
 {
 	partial class MainForm
 	{
@@ -74,6 +76,9 @@
 			this.textFileConversionBackgroundWorker = new System.ComponentModel.BackgroundWorker();
 			this.settingsToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.imageFileConversionBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+			this.notifyIconContextMenuStrip = new MaterialSkin.Controls.MaterialContextMenuStrip();
+			this.maximizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.materialTabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
@@ -84,6 +89,7 @@
 			this.tabPage3.SuspendLayout();
 			this.tableLayoutPanel3.SuspendLayout();
 			this.tableLayoutPanel4.SuspendLayout();
+			this.notifyIconContextMenuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// materialTabControl1
@@ -810,6 +816,33 @@
 			// 
 			this.imageFileConversionBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ImageFileConversionBackgroundWorker_DoWork);
 			// 
+			// notifyIconContextMenuStrip
+			// 
+			this.notifyIconContextMenuStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+			this.notifyIconContextMenuStrip.Depth = 0;
+			this.notifyIconContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+			this.notifyIconContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.maximizeToolStripMenuItem,
+            this.closeToolStripMenuItem});
+			this.notifyIconContextMenuStrip.MouseState = MaterialSkin.MouseState.HOVER;
+			this.notifyIconContextMenuStrip.Name = "notifyIconContextMenu";
+			this.notifyIconContextMenuStrip.Size = new System.Drawing.Size(211, 80);
+			this.notifyIconContextMenuStrip.Text = "File converter";
+			// 
+			// maximizeToolStripMenuItem
+			// 
+			this.maximizeToolStripMenuItem.Name = "maximizeToolStripMenuItem";
+			this.maximizeToolStripMenuItem.Size = new System.Drawing.Size(210, 24);
+			this.maximizeToolStripMenuItem.Text = "Maximize";
+			this.maximizeToolStripMenuItem.Click += new System.EventHandler(this.MaximizeToolStripMenuItem_Click);
+			// 
+			// closeToolStripMenuItem
+			// 
+			this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
+			this.closeToolStripMenuItem.Size = new System.Drawing.Size(210, 24);
+			this.closeToolStripMenuItem.Text = "Close";
+			this.closeToolStripMenuItem.Click += new System.EventHandler(this.CloseToolStripMenuItem_Click);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -825,6 +858,7 @@
 			this.Text = "File Converter";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
 			this.Load += new System.EventHandler(this.MainForm_Load);
+			this.Resize += new System.EventHandler(this.MainForm_Resize);
 			this.materialTabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
 			this.tableLayoutPanel2.ResumeLayout(false);
@@ -841,6 +875,7 @@
 			this.tableLayoutPanel3.PerformLayout();
 			this.tableLayoutPanel4.ResumeLayout(false);
 			this.tableLayoutPanel4.PerformLayout();
+			this.notifyIconContextMenuStrip.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -890,6 +925,9 @@
 		private MaterialSkin.Controls.MaterialLabel materialLabel13;
 		private System.Windows.Forms.TableLayoutPanel imageFileConversionTableLayoutPanel;
 		private System.ComponentModel.BackgroundWorker imageFileConversionBackgroundWorker;
+		private MaterialSkin.Controls.MaterialContextMenuStrip notifyIconContextMenuStrip;
+		private ToolStripMenuItem maximizeToolStripMenuItem;
+		private ToolStripMenuItem closeToolStripMenuItem;
 	}
 }
 

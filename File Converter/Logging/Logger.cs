@@ -14,9 +14,9 @@ namespace File_Converter.Logging
 		private static Logger instance = null;
 		private static readonly object padlock = new object();
 
-		public EventHandler StartLogging;
-		public EventHandler<LogArgs> Logging;
-		public EventHandler EndLogging;
+		//public EventHandler StartLogging;
+		//public EventHandler<LogArgs> Logging;
+		//public EventHandler EndLogging;
 
 		private Logger()
 		{
@@ -40,15 +40,15 @@ namespace File_Converter.Logging
 
 		private Queue<Log> Logs { get; set; } = new Queue<Log>();
 
-		private void OnStartLogging() => StartLogging?.Invoke(this, EventArgs.Empty);
+		//private void OnStartLogging() => StartLogging?.Invoke(this, EventArgs.Empty);
 
-		private void OnLogging(int percent) => Logging?.Invoke(this, new LogArgs() { percent = percent });
+		//private void OnLogging(int percent) => Logging?.Invoke(this, new LogArgs() { percent = percent });
 
-		private void OnEndLogging() => EndLogging?.Invoke(this, EventArgs.Empty);
+		//private void OnEndLogging() => EndLogging?.Invoke(this, EventArgs.Empty);
 
 		public void PrintToListView(ListView listView)
 		{
-			OnStartLogging();
+			//OnStartLogging();
 			listView.Invoke((Action)(() =>
 			{
 				int percent = 0;
@@ -60,7 +60,7 @@ namespace File_Converter.Logging
 					string[] row = { log.Message, log.Log_Status.ToString(), log.Caller == null ? "Unknown" : log.Caller.ToString() };
 					ListViewItem item = new ListViewItem(row);
 					listView.Items.Add(item);
-					OnLogging(percent);
+					//OnLogging(percent);
 					percent = (total - Logs.Count) * 100 / total;
 				}
 
@@ -68,9 +68,9 @@ namespace File_Converter.Logging
 				{
 					percent = (total - Logs.Count) * 100 / total;
 				}
-				OnLogging(percent);
+				//OnLogging(percent);
 			}));
-			OnEndLogging();
+			//OnEndLogging();
 		}
 
 		public void Enqueue(IEnumerable<Log> logs)

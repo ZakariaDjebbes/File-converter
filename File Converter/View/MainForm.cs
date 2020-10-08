@@ -26,12 +26,16 @@ namespace File_Converter
 		private Dictionary<string, Task> generatedTasks = new Dictionary<string, Task>();
 		private List<Control> generatedControls = new List<Control>();
 		private string[] filePaths;
+		private NotifyIcon notifyIcon = null;
 
 		private MaterialButton saveAllButton;
 
+		#region FORM_SETUP
 		public MainForm()
 		{
 			InitializeComponent();
+			//Icon
+			Icon = Properties.Resources.MainIcon;
 			//material skin theme
 			materialSkinManager = MaterialSkinManager.Instance;
 			materialSkinManager.AddFormToManage(this);
@@ -45,7 +49,7 @@ namespace File_Converter
 				TextShade.WHITE);
 			DrawerHighlightWithAccent = true;
 			DrawerBackgroundWithAccent = true;
-			DrawerUseColors = true;
+			DrawerUseColors = true;			
 		}
 
 		private void MainForm_Load(object sender, EventArgs e)
@@ -55,10 +59,61 @@ namespace File_Converter
 			textFilesConversionTableLayoutPanel.Padding = new Padding(20, 0, 20, 0);
 		}
 
+		private void MainForm_Resize(object sender, EventArgs e)
+		{
+			if (WindowState == FormWindowState.Minimized && notifyIcon == null)
+			{
+				notifyIcon = new NotifyIcon();
+				notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
+				notifyIcon.BalloonTipTitle = "File converter is minimized";
+				notifyIcon.BalloonTipText = "File converter is minimized, double click on the icon to show the full window again";
+				notifyIcon.Icon = Properties.Resources.MainIcon;
+				notifyIcon.Text = "File converter";
+				notifyIcon.Visible = true;
+				notifyIcon.ContextMenuStrip = notifyIconContextMenuStrip;
+				notifyIcon.ShowBalloonTip(1500);
+				notifyIcon.DoubleClick += NotifyIcon_DoubleClick;
+				ShowInTaskbar = false;
+			}
+			else if (notifyIcon != null)
+			{
+				notifyIcon.Dispose();
+				notifyIcon = null;
+			}
+		}
+
+		private void NotifyIcon_DoubleClick(object sender, EventArgs e)
+		{
+			WindowState = FormWindowState.Normal;
+			ShowInTaskbar = true;
+			if(notifyIcon != null)
+			{
+				notifyIcon.Dispose();
+				notifyIcon = null;
+			}
+		}
+
+		private void MaximizeToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			WindowState = FormWindowState.Normal;
+			ShowInTaskbar = true;
+			if (notifyIcon != null)
+			{
+				notifyIcon.Dispose();
+				notifyIcon = null;
+			}
+		}
+
+		private void CloseToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Application.Exit();
+		}
+
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			FileConverter.ClearGeneratedFiles();
 		}
+		#endregion
 
 		#region SETTINGS
 
@@ -83,7 +138,7 @@ namespace File_Converter
 
 		#endregion SETTINGS
 
-		#region GENERAL METHODS
+		#region GENERAL_METHODS
 
 		private void SetFileDialogFilters(Type fileType, FileDialog dialog)
 		{
@@ -452,7 +507,7 @@ namespace File_Converter
 
 		#endregion GENERAL METHODS
 
-		#region TEXT FILE CONVERSION
+		#region TEXT_CONVERSION
 
 		private void ChooseTextFileButton_Click(object sender, EventArgs e)
 		{
@@ -647,6 +702,7 @@ namespace File_Converter
 
 		#endregion TEXT FILE CONVERSION
 
+		#region IMAGE CONVERSION
 		private void SelectImageFilesButton_Click(object sender, EventArgs e)
 		{
 			SetFileDialogFilters(typeof(ImageFileType), fileOpenDialog);
@@ -788,6 +844,17 @@ namespace File_Converter
 						LogStatus.STARTED, tiffFileConverter));
 					tiffFileConverter.ConvertFile(filePath);
 				}
+				else if (currentTarget.Extension.Equals(ImageFileType.Ico.Extension))
+				{
+					IcoFileConverter icoFileConverter = new IcoFileConverter();
+					icoFileConverter.FileStartConverting += OnFileStartConverting;
+					icoFileConverter.FileConverting += OnFileConverting;
+					icoFileConverter.FileConverted += OnFileConverted;
+
+					Logger.Instance.Enqueue(new Log($"Thread [{Thread.CurrentThread.ManagedThreadId}] started conversion of file [{filePath}]",
+						LogStatus.STARTED, icoFileConverter));
+					icoFileConverter.ConvertFile(filePath);
+				}
 			}
 			catch (IOException exception)
 			{
@@ -802,6 +869,8 @@ namespace File_Converter
 
 			return;
 		}
+
+		#endregion
 	}
 }
 

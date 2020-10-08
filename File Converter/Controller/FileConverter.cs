@@ -176,9 +176,9 @@ namespace File_Converter.Controller
 		protected string ToImageFormat(string path, ImageFormat format)
 		{
 			string tempPath = GetTempPath();
-			using Image jpg = Image.FromFile(path);
+			using Image img = Image.FromFile(path);
 			OnFileConverting(path, new Random().Next(15, 69));
-			jpg.Save(tempPath, format);
+			img.Save(tempPath, format);
 			OnFileConverting(path, 100);
 
 			return tempPath;

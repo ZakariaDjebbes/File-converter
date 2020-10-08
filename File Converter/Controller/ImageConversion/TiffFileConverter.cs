@@ -34,6 +34,10 @@ namespace File_Converter.Controller.ImageConversion
 			{
 				result = ToImageFormat(path, ImageFormat.Tiff);
 			}
+			else if (current.Extension.Equals(ImageFileType.Ico.Extension))
+			{
+				result = ToImageFormat(path, ImageFormat.Tiff);
+			}
 
 			OnFileConverted(path, result);
 		}

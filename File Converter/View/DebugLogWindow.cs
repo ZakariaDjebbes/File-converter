@@ -14,35 +14,7 @@ namespace File_Converter.View
 		public DebugLogWindow()
 		{
 			InitializeComponent();
-			logger.StartLogging += OnStartLogging;
-			logger.Logging += OnLogging;
-			logger.EndLogging += OnEndLogging;
-		}
-
-		private void OnStartLogging(object sender, EventArgs e)
-		{
-			refreshBar.Invoke((Action)(() =>
-			{
-				refreshBar.Value = 0;
-				refreshBar.Visible = true;
-			}));
-		}
-
-		private void OnLogging(object sender, LogArgs e)
-		{
-			refreshBar.Invoke((Action)(() =>
-			{
-				refreshBar.Value = e.percent;
-			}));
-		}
-
-		private void OnEndLogging(object sender, EventArgs e)
-		{
-			refreshBar.Invoke((Action)(() =>
-			{
-				refreshBar.Value = 0;
-				refreshBar.Visible = false;
-			}));
+		
 		}
 
 		private void DebugLogWindow_FormClosing(object sender, FormClosingEventArgs e)

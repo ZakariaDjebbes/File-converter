@@ -1,4 +1,6 @@
-﻿namespace File_Converter.View
+﻿using MaterialSkin.Controls;
+
+namespace File_Converter.View
 {
 	partial class DebugLogWindow
 	{
@@ -32,11 +34,9 @@
 			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.refreshButton = new System.Windows.Forms.Button();
 			this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
-			this.refreshBar = new System.Windows.Forms.ProgressBar();
-			this.saveButton = new System.Windows.Forms.Button();
 			this.panel1 = new System.Windows.Forms.Panel();
+			this.refreshButton = new MaterialSkin.Controls.MaterialButton();
 			this.panel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -74,41 +74,9 @@
 			this.columnHeader3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			this.columnHeader3.Width = 100;
 			// 
-			// refreshButton
-			// 
-			this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.refreshButton.Location = new System.Drawing.Point(802, 12);
-			this.refreshButton.Name = "refreshButton";
-			this.refreshButton.Size = new System.Drawing.Size(300, 40);
-			this.refreshButton.TabIndex = 1;
-			this.refreshButton.Text = "Show / Refresh";
-			this.refreshButton.UseVisualStyleBackColor = true;
-			this.refreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
-			// 
 			// backgroundWorker
 			// 
 			this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker_DoWork);
-			// 
-			// refreshBar
-			// 
-			this.refreshBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.refreshBar.Location = new System.Drawing.Point(13, 58);
-			this.refreshBar.Margin = new System.Windows.Forms.Padding(3, 3, 3, 30);
-			this.refreshBar.Name = "refreshBar";
-			this.refreshBar.Size = new System.Drawing.Size(1089, 14);
-			this.refreshBar.Step = 1;
-			this.refreshBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-			this.refreshBar.TabIndex = 2;
-			// 
-			// saveButton
-			// 
-			this.saveButton.Location = new System.Drawing.Point(13, 12);
-			this.saveButton.Name = "saveButton";
-			this.saveButton.Size = new System.Drawing.Size(300, 40);
-			this.saveButton.TabIndex = 3;
-			this.saveButton.Text = "Save logs";
-			this.saveButton.UseVisualStyleBackColor = true;
 			// 
 			// panel1
 			// 
@@ -117,13 +85,30 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.panel1.AutoSize = true;
 			this.panel1.Controls.Add(this.refreshButton);
-			this.panel1.Controls.Add(this.saveButton);
-			this.panel1.Controls.Add(this.refreshBar);
 			this.panel1.Controls.Add(this.logsListView);
 			this.panel1.Location = new System.Drawing.Point(-1, 74);
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(1118, 379);
 			this.panel1.TabIndex = 4;
+			// 
+			// refreshButton
+			// 
+			this.refreshButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.refreshButton.Depth = 0;
+			this.refreshButton.DrawShadows = true;
+			this.refreshButton.HighEmphasis = true;
+			this.refreshButton.Icon = null;
+			this.refreshButton.Location = new System.Drawing.Point(23, 13);
+			this.refreshButton.Margin = new System.Windows.Forms.Padding(4, 6, 4, 60);
+			this.refreshButton.MouseState = MaterialSkin.MouseState.HOVER;
+			this.refreshButton.Name = "refreshButton";
+			this.refreshButton.Size = new System.Drawing.Size(140, 36);
+			this.refreshButton.TabIndex = 1;
+			this.refreshButton.Text = "Show / Refresh";
+			this.refreshButton.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+			this.refreshButton.UseAccentColor = false;
+			this.refreshButton.UseVisualStyleBackColor = true;
+			this.refreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
 			// 
 			// DebugLogWindow
 			// 
@@ -136,6 +121,7 @@
 			this.Text = "DebugLogWindow";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DebugLogWindow_FormClosing);
 			this.panel1.ResumeLayout(false);
+			this.panel1.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -147,10 +133,8 @@
 		private System.Windows.Forms.ColumnHeader columnHeader1;
 		private System.Windows.Forms.ColumnHeader columnHeader2;
 		private System.Windows.Forms.ColumnHeader columnHeader3;
-		private System.Windows.Forms.Button refreshButton;
 		private System.ComponentModel.BackgroundWorker backgroundWorker;
-		private System.Windows.Forms.ProgressBar refreshBar;
-		private System.Windows.Forms.Button saveButton;
 		private System.Windows.Forms.Panel panel1;
+		private MaterialButton refreshButton;
 	}
 }

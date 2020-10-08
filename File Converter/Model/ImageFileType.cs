@@ -14,6 +14,7 @@ namespace File_Converter.Model
 		public static readonly ImageFileType Webp = new ImageFileType("WebP (*.webp)", ".webp");
 		public static readonly ImageFileType Bmp = new ImageFileType("Bitmap image file (*.bmp)", ".bmp");
 		public static readonly ImageFileType Tiff = new ImageFileType("Tagged Image File Format (*.tiff)", ".tiff");
+		public static readonly ImageFileType Ico = new ImageFileType("Icon File Format (*.ico)", ".ico");
 
 		static ImageFileType()
 		{
@@ -25,6 +26,7 @@ namespace File_Converter.Model
 				{ Webp.Extension, Webp},
 				{ Bmp.Extension, Bmp },
 				{ Tiff.Extension, Tiff},
+				{ Ico.Extension, Ico}
 			};
 		}
 

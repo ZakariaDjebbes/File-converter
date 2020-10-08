@@ -5,7 +5,7 @@ using File_Converter.Model;
 
 namespace File_Converter.Controller.ImageConversion
 {
-	internal class BmpFileConverter : FileConverter
+	internal class IcoFileConverter : FileConverter
 	{
 		public override void ConvertFile(string path)
 		{
@@ -16,11 +16,11 @@ namespace File_Converter.Controller.ImageConversion
 
 			if (current.Extension.Equals(ImageFileType.Jpg.Extension))
 			{
-				result = ToImageFormat(path, ImageFormat.Bmp);
+				result = ToImageFormat(path, ImageFormat.Icon);
 			}
 			else if (current.Extension.Equals(ImageFileType.Gif.Extension))
 			{
-				result = ToImageFormat(path, ImageFormat.Bmp);
+				result = ToImageFormat(path, ImageFormat.Icon);
 			}
 			else if (current.Extension.Equals(ImageFileType.Webp.Extension))
 			{
@@ -28,15 +28,15 @@ namespace File_Converter.Controller.ImageConversion
 			}
 			else if (current.Extension.Equals(ImageFileType.Png.Extension))
 			{
-				result = ToImageFormat(path, ImageFormat.Bmp);
+				result = ToImageFormat(path, ImageFormat.Icon);
 			}
 			else if (current.Extension.Equals(ImageFileType.Tiff.Extension))
 			{
-				result = ToImageFormat(path, ImageFormat.Bmp);
+				result = ToImageFormat(path, ImageFormat.Icon);
 			}
-			else if (current.Extension.Equals(ImageFileType.Ico.Extension))
+			else if (current.Extension.Equals(ImageFileType.Bmp.Extension))
 			{
-				result = ToImageFormat(path, ImageFormat.Bmp);
+				result = ToImageFormat(path, ImageFormat.Icon);
 			}
 
 			OnFileConverted(path, result);
