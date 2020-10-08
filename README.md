@@ -48,6 +48,7 @@ Table of possible conversions
 - Wepb file format 
 - Canceling running conversions (And bugs when clicking cancel button while a background thread is running)
 - Limiting file sizes 
+- Adding a release build to this repo
 - Finding a better way to convert PDF to WORD files that doesn't require a third party package that has limitations.
 - Maybe, video conversion 
 
