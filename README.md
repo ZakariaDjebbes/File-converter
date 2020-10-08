@@ -42,6 +42,15 @@ Table of possible conversions
 | .tiff      | YES  | YES  | YES  | NO   | YES  | N/A  | YES  |
 | .bmp       | YES  | YES  | YES  | NO   | YES  | YES  | N/A  |
 
+# Missing stuff
+
+- A better and persistent settings menu 
+- Wepb file format 
+- Canceling running conversions (And bugs when clicking cancel button while a background thread is running)
+- Limiting file sizes 
+- Finding a better way to convert PDF to WORD files that doesn't require a third party package that has limitations.
+- Maybe, video conversion 
+
 # Packages used
 - [IText7](https://github.com/itext/itext7-dotnet) for creating and updating PDF documents.
 - **TRIAL** version of [Pdf Focus](https://www.sautinsoft.com/products/pdf-focus/order.php) for converting PDF files to Word documents. _(Since its a trial version limitation apply to resulting word files converted from pdf files)_
