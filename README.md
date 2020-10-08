@@ -37,7 +37,7 @@ Table of possible conversions
 | .png       | N/A  | YES  | YES  | NO   | YES  | YES  | YES  |
 | .jpg       | YES  | N/A  | YES  | NO   | YES  | YES  | YES  |
 | .ico       | YES  | YES  | N/A  | NO   | YES  | YES  | YES  |
-| .webp      | YES  | YES  | YES  | N/A  | YES  | YES  | YES  |
+| .webp      | NO   | NO   | NO   | N/A  | NO   | NO   | NO   |
 | .gif       | YES  | YES  | YES  | NO   | N/A  | YES  | YES  |
 | .tiff      | YES  | YES  | YES  | NO   | YES  | N/A  | YES  |
 | .bmp       | YES  | YES  | YES  | NO   | YES  | YES  | N/A  |
