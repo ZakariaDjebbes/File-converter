@@ -7,7 +7,7 @@ using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using Microsoft.Office.Interop.Word;
 
-namespace File_Converter.Controller
+namespace File_Converter.Controller.TextConversion
 {
 	public class TextFileConverter : FileConverter
 	{
@@ -62,7 +62,7 @@ namespace File_Converter.Controller
 		private string WordToText(string path)
 		{
 			string tempPath = GetTempPath();
-			
+
 			Application app = new Application();
 
 			if (app == null)

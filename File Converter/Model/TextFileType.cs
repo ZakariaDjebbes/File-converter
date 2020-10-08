@@ -12,7 +12,7 @@ namespace File_Converter.Model
 		public static readonly TextFileType Pdf = new TextFileType("Portable Document Format (*.pdf)", ".pdf");
 		public static readonly TextFileType Word = new TextFileType("Word file (*.docx)", ".docx");
 		//public static readonly TextFileType Html = new TextFileType("Hypertext Markup Language (*.html)", ".html");
-		
+
 		static TextFileType()
 		{
 			valuePairs = new Dictionary<string, TextFileType>
@@ -75,7 +75,6 @@ namespace File_Converter.Model
 
 			return textFiles;
 		}
-
 
 		public static bool Exists(string extension)
 		{

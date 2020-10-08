@@ -41,8 +41,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BouncyCastle.Crypto, Version=1.8.6.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
-      <HintPath>..\packages\Portable.BouncyCastle.1.8.6.7\lib\net40\BouncyCastle.Crypto.dll</HintPath>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.8.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
+      <HintPath>..\packages\Portable.BouncyCastle.1.8.8\lib\net40\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="Common.Logging, Version=3.4.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <HintPath>..\packages\Common.Logging.3.4.1\lib\net40\Common.Logging.dll</HintPath>
@@ -100,15 +100,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controller\PdfFileConverter.cs" />
+    <Compile Include="Controller\ImageConversion\BmpFileConverter.cs" />
+    <Compile Include="Controller\ImageConversion\GifFileConverter.cs" />
+    <Compile Include="Controller\ImageConversion\IcoFileConverter.cs" />
+    <Compile Include="Controller\ImageConversion\JpgFileConverter.cs" />
+    <Compile Include="Controller\ImageConversion\PngFileConverter.cs" />
+    <Compile Include="Controller\ImageConversion\TiffFileConverter.cs" />
+    <Compile Include="Controller\ImageConversion\WebPFileConverter.cs" />
+    <Compile Include="Controller\TextConversion\PdfFileConverter.cs" />
     <Compile Include="Controller\FileConverter.cs" />
-    <Compile Include="Controller\TextFileConverter.cs" />
-    <Compile Include="Controller\WordFileConverter.cs" />
+    <Compile Include="Controller\TextConversion\TextFileConverter.cs" />
+    <Compile Include="Controller\TextConversion\WordFileConverter.cs" />
     <Compile Include="Logging\Log.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Extensions\ExtensionMethods.cs" />
     <Compile Include="Model\ArchiveFileType.cs" />
     <Compile Include="Model\FileType.cs" />
+    <Compile Include="Model\ImageFileType.cs" />
     <Compile Include="Model\TextFileType.cs" />
     <Compile Include="Serialization\UserSettings.cs" />
     <Compile Include="View\DebugLogWindow.cs">
@@ -163,7 +171,9 @@
   <ItemGroup>
     <None Include="Resources\baseline_text_snippet_black_18dp.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\MainIcon.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
     <ItemGroup>

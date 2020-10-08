@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
 using System.Windows.Forms;
@@ -125,6 +127,7 @@ namespace File_Converter.Controller
 
 			convertedFiles.Clear();
 		}
+
 		protected static int GetNumberOfLines(StreamReader streamReader, bool reset = true)
 		{
 			int lineCount = 0;
@@ -168,6 +171,17 @@ namespace File_Converter.Controller
 					}
 				}
 			}
+		}
+
+		protected string ToImageFormat(string path, ImageFormat format)
+		{
+			string tempPath = GetTempPath();
+			using Image img = Image.FromFile(path);
+			OnFileConverting(path, new Random().Next(15, 69));
+			img.Save(tempPath, format);
+			OnFileConverting(path, 100);
+
+			return tempPath;
 		}
 	}
 }

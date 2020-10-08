@@ -1,12 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using File_Converter.Model;
 using iText.Kernel.Pdf;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.Word;
 
-namespace File_Converter.Controller
+namespace File_Converter.Controller.TextConversion
 {
 	public class PdfFileConverter : FileConverter
 	{
@@ -59,14 +58,14 @@ namespace File_Converter.Controller
 		private string WordToPdf(string path)
 		{
 			string tempPath = GetTempPath();
-			
+
 			Application app = new Application();
 
-			if(app == null)
+			if (app == null)
 			{
 				throw new ApplicationException("Microsoft Word isn't installed on this computer");
 			}
-			
+
 			app.DisplayAlerts = WdAlertLevel.wdAlertsNone;
 
 			var objPresSet = app.Documents;
@@ -75,11 +74,11 @@ namespace File_Converter.Controller
 			try
 			{
 				OnFileConverting(path, new Random().Next(0, 41));
-				
+
 				objPres.ExportAsFixedFormat(
 					tempPath,
 					WdExportFormat.wdExportFormatPDF,
-					false, 
+					false,
 					WdExportOptimizeFor.wdExportOptimizeForPrint,
 					WdExportRange.wdExportAllDocument
 				);
@@ -98,7 +97,7 @@ namespace File_Converter.Controller
 			OnFileConverting(path, new Random().Next(81, 96));
 
 			app.Quit();
-			
+
 			OnFileConverting(path, 100);
 
 			return tempPath;
