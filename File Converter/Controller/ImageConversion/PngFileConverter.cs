@@ -6,7 +6,7 @@ using File_Converter.Model;
 
 namespace File_Converter.Controller.ImageConversion
 {
-	internal class PngFileConverter : FileConverter
+	internal class PngFileConverter : ImageFileConverter
 	{
 		public override void ConvertFile(string path)
 		{
@@ -25,7 +25,7 @@ namespace File_Converter.Controller.ImageConversion
 			}
 			else if (current.Extension.Equals(ImageFileType.Webp.Extension))
 			{
-				throw new NotImplementedException();
+				result = WebpToFileFormat(path, ImageFormat.Png);
 			}
 			else if (current.Extension.Equals(ImageFileType.Bmp.Extension))
 			{

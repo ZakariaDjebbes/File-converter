@@ -5,7 +5,7 @@ using File_Converter.Model;
 
 namespace File_Converter.Controller.ImageConversion
 {
-	internal class GifFileConverter : FileConverter
+	internal class GifFileConverter : ImageFileConverter
 	{
 		public override void ConvertFile(string path)
 		{
@@ -24,7 +24,7 @@ namespace File_Converter.Controller.ImageConversion
 			}
 			else if (current.Extension.Equals(ImageFileType.Webp.Extension))
 			{
-				throw new NotImplementedException();
+				result = WebpToFileFormat(path, ImageFormat.Gif);
 			}
 			else if (current.Extension.Equals(ImageFileType.Bmp.Extension))
 			{
